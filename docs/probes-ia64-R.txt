@@ -1,0 +1,205 @@
+PROBE compiler: cc/names=(as_is,shortened)/float=ieee/define=(_LARGEFILE,_USE_STD_STAT,_POSIX_EXIT)/nolist/object=probe_tmp.obj
+VSI C V7.4-001 on OpenVMS IA64 V8.4-2L3
+--- r_files (CRTL defaults)
+FILE f_stmlf.txt rfm=stmlf wrote 2000  st_size 2000  read 2000  same-bytes yes
+FILE f_stmlf.txt pread(100 @ 1000) 100  matches yes
+FILE f_stmlf.txt lseek(SEEK_END) 2000
+FILE f_stmlf.txt mmap ok  first-2000-bytes-match yes
+FILE f_stm.txt rfm=stm   wrote 2000  st_size 5960  read 3960  same-bytes NO
+FILE f_stm.txt pread(100 @ 1000) 1  matches NO
+FILE f_stm.txt lseek(SEEK_END) 5960
+FILE f_stm.txt mmap ok  first-2000-bytes-match NO
+FILE f_var.txt rfm=var   wrote 2000  st_size 7920  read 3960  same-bytes NO
+FILE f_var.txt pread(100 @ 1000) 100  matches NO
+FILE f_var.txt lseek(SEEK_END) 7920
+FILE f_var.txt mmap ok  first-2000-bytes-match NO
+FILE f_fix.txt rfm=fix   wrote 2000  st_size 2048  read 2048  same-bytes NO
+FILE f_fix.txt pread(100 @ 1000) 24  matches NO
+FILE f_fix.txt lseek(SEEK_END) 2048
+FILE f_fix.txt mmap ok  first-2000-bytes-match yes
+FILE f_udf.txt rfm=udf   wrote 2000  st_size 2000  read 2000  same-bytes yes
+FILE f_udf.txt pread(100 @ 1000) 100  matches yes
+FILE f_udf.txt lseek(SEEK_END) 2000
+FILE f_udf.txt mmap ok  first-2000-bytes-match yes
+FILE f_big   st_size 10485760  pread(4096 @ 9MB+7) 4096  first byte ok
+FILE stat(dir) S_ISDIR yes
+FILE stat("f_dir/") ok
+FILE open(dir, O_RDONLY) no such file or directory
+FILE stat("nope/x.html") errno 2 (no such file or directory)
+R_FILES DONE
+--- r_files (feature logicals)
+FILE f_stmlf.txt rfm=stmlf wrote 2000  st_size 2000  read 2000  same-bytes yes
+FILE f_stmlf.txt pread(100 @ 1000) 100  matches yes
+FILE f_stmlf.txt lseek(SEEK_END) 2000
+FILE f_stmlf.txt mmap ok  first-2000-bytes-match yes
+FILE f_stm.txt rfm=stm   wrote 2000  st_size 5960  read 3960  same-bytes NO
+FILE f_stm.txt pread(100 @ 1000) 1  matches NO
+FILE f_stm.txt lseek(SEEK_END) 5960
+FILE f_stm.txt mmap ok  first-2000-bytes-match NO
+FILE f_var.txt rfm=var   wrote 2000  st_size 7920  read 3960  same-bytes NO
+FILE f_var.txt pread(100 @ 1000) 100  matches NO
+FILE f_var.txt lseek(SEEK_END) 7920
+FILE f_var.txt mmap ok  first-2000-bytes-match NO
+FILE f_fix.txt rfm=fix   wrote 2000  st_size 2048  read 2048  same-bytes NO
+FILE f_fix.txt pread(100 @ 1000) 24  matches NO
+FILE f_fix.txt lseek(SEEK_END) 2048
+FILE f_fix.txt mmap ok  first-2000-bytes-match yes
+FILE f_udf.txt create failed: operation invalid for file organization or device
+FILE f_big   st_size 10485760  pread(4096 @ 9MB+7) 4096  first byte ok
+FILE stat(dir) S_ISDIR yes
+FILE stat("f_dir/") ok
+FILE open(dir, O_RDONLY) no such file or directory
+FILE stat("nope/x.html") errno 2 (no such file or directory)
+R_FILES DONE
+--- r_net (CRTL defaults)
+NET SO_REUSEADDR                       yes 
+NET bind 127.0.0.1:0                   yes 
+NET fcntl O_NONBLOCK on socket         yes 
+NET non-blocking accept -> EWOULDBLOCK yes errno=35 (I/O stream empty)
+NET non-blocking connect               yes errno=36 (operation in progress)
+NET poll() on listening socket         yes 
+NET accept after poll                  yes 
+NET poll() POLLOUT on connecting socket yes 
+NET TCP_NODELAY                        yes 
+NET SO_KEEPALIVE                       yes 
+NET SO_RCVTIMEO                        yes 
+NET send/recv                          yes 
+NET MSG_DONTWAIT on empty socket       yes errno=35 (I/O stream empty)
+NET recv after peer close returns 0    yes 
+NET getaddrinfo localhost              yes 
+NET getaddrinfo passive                yes 
+NET AF_INET6 socket                    yes 
+NET IPV6_V6ONLY=0 (dual stack)         yes 
+NET AF_UNIX socket                     yes 
+NET AF_UNIX bind                       NO  errno=65535 (no logical name match)
+NET socketpair                         yes 
+R_NET DONE
+--- r_net (feature logicals)
+NET SO_REUSEADDR                       yes 
+NET bind 127.0.0.1:0                   yes 
+NET fcntl O_NONBLOCK on socket         yes 
+NET non-blocking accept -> EWOULDBLOCK yes errno=35 (I/O stream empty)
+NET non-blocking connect               yes errno=36 (operation in progress)
+NET poll() on listening socket         yes 
+NET accept after poll                  yes 
+NET poll() POLLOUT on connecting socket yes 
+NET TCP_NODELAY                        yes 
+NET SO_KEEPALIVE                       yes 
+NET SO_RCVTIMEO                        yes 
+NET send/recv                          yes 
+NET MSG_DONTWAIT on empty socket       yes errno=35 (I/O stream empty)
+NET recv after peer close returns 0    yes 
+NET getaddrinfo localhost              yes 
+NET getaddrinfo passive                yes 
+NET AF_INET6 socket                    yes 
+NET IPV6_V6ONLY=0 (dual stack)         yes 
+NET AF_UNIX socket                     yes 
+NET AF_UNIX bind                       NO  errno=65535 (no logical name match)
+NET socketpair                         yes 
+R_NET DONE
+--- r_net2 (CRTL defaults)
+NET2 sysconf(_SC_OPEN_MAX)                  yes 150
+NET2 concurrent connections                 NO  44 connections (89 fds) before stop: errno=65535 (exceeded byte count quota)
+NET2 poll() over all connections            yes 40 fds, 4 ready (expect 4) , 0.020 ms per call
+NET2 writev 16 x 4KB                        yes returned 65536
+NET2 writev data in order                   yes 
+NET2 recv EOF after peer SHUT_WR            yes 
+NET2 send after peer SHUT_WR still arrives  yes 
+NET2 re-bind same port right after close    yes 
+NET2 bind [::]:0                            NO  errno=22 (invalid argument)
+NET2 IPv4 client reaches [::] listener      yes 
+NET2 fcntl F_SETFD FD_CLOEXEC               yes 
+NET2 F_GETFL shows O_NONBLOCK               yes 
+NET2 TCP_DEFER_ACCEPT defined               NO  
+NET2 SO_ACCEPTFILTER defined                NO  
+R_NET2 DONE
+--- r_net2 (feature logicals)
+NET2 sysconf(_SC_OPEN_MAX)                  yes 150
+NET2 concurrent connections                 NO  44 connections (89 fds) before stop: errno=65535 (exceeded byte count quota)
+NET2 poll() over all connections            yes 40 fds, 4 ready (expect 4) , 0.020 ms per call
+NET2 writev 16 x 4KB                        yes returned 65536
+NET2 writev data in order                   yes 
+NET2 recv EOF after peer SHUT_WR            yes 
+NET2 send after peer SHUT_WR still arrives  yes 
+NET2 re-bind same port right after close    yes 
+NET2 bind [::]:0                            NO  errno=22 (invalid argument)
+NET2 IPv4 client reaches [::] listener      yes 
+NET2 fcntl F_SETFD FD_CLOEXEC               yes 
+NET2 F_GETFL shows O_NONBLOCK               yes 
+NET2 TCP_DEFER_ACCEPT defined               NO  
+NET2 SO_ACCEPTFILTER defined                NO  
+R_NET2 DONE
+--- r_proc (CRTL defaults)
+PROC sysconf(_SC_PAGESIZE)              yes 8192
+PROC sysconf(_SC_NPROCESSORS_ONLN)      yes 1
+PROC RLIMIT_NOFILE defined (getrlimit)  NO  
+PROC pthread_attr_setstacksize 1MB      yes 1048576
+PROC pthread_create + TSD key           yes 
+PROC PTHREAD_MUTEX_ERRORCHECK           yes 
+PROC PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP NO  
+PROC pthread_cond_timedwait timeout     yes 
+PROC clock_gettime(CLOCK_MONOTONIC)     yes 
+PROC sigaction + raise(SIGHUP)          yes 
+PROC sigprocmask block SIGTERM          yes 
+PROC mmap MAP_ANONYMOUS 64MB            yes 1E4000
+PROC malloc 4GB in 256MB blocks         yes 0 MB in 256MB blocks, highest 0
+PROC getpid                             yes 78507
+R_PROC DONE
+--- r_proc (feature logicals)
+PROC sysconf(_SC_PAGESIZE)              yes 8192
+PROC sysconf(_SC_NPROCESSORS_ONLN)      yes 1
+PROC RLIMIT_NOFILE defined (getrlimit)  NO  
+PROC pthread_attr_setstacksize 1MB      yes 1048576
+PROC pthread_create + TSD key           yes 
+PROC PTHREAD_MUTEX_ERRORCHECK           yes 
+PROC PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP NO  
+PROC pthread_cond_timedwait timeout     yes 
+PROC clock_gettime(CLOCK_MONOTONIC)     yes 
+PROC sigaction + raise(SIGHUP)          yes 
+PROC sigprocmask block SIGTERM          yes 
+PROC mmap MAP_ANONYMOUS 64MB            yes 1E4000
+PROC malloc 4GB in 256MB blocks         yes 0 MB in 256MB blocks, highest 0
+PROC getpid                             yes 78507
+R_PROC DONE
+
+    decc$set_child_standard_streams(in, out, -1);
+....^
+%CC-I-IMPLICITFUNC, In this statement, the identifier "decc$set_child_standard_streams" is implicitly declared as a function.
+at line number 86 in file USER$ROOT:[IAIN.vms_lighttpd.LIGHTTPD_PROBE]r_spawn.c;3
+--- r_spawn (CRTL defaults)
+SPAWN self = dka800:[users.][iain.vms_lighttpd.lighttpd_probe]r_spawn.exe;1
+SPAWN vfork+execv returns a pid              yes 
+SPAWN child stdout -> pipe                   yes hello from child
+
+SPAWN waitpid                                yes waitpid=81591 status=0 exited=1 code=0
+SPAWN child stdout -> socketpair             yes hello from child
+
+SPAWN child stdout -> TCP socket             yes hello from child
+
+SPAWN execve envp reaches child              yes from-execve
+
+SPAWN socket fd inherited by number          yes child getsockname(fd 3) ok
+
+SPAWN listening socket as child stdin        yes child getsockname(0) ok
+
+SPAWN spawn cost                             yes 10/10 ok, 10.2 ms per spawn+exit
+R_SPAWN DONE
+--- r_spawn (feature logicals)
+SPAWN self = /DKA800/USERS/IAIN/vms_lighttpd/LIGHTTPD_PROBE/r_spawn.exe
+SPAWN vfork+execv returns a pid              yes 
+SPAWN child stdout -> pipe                   yes hello from child
+
+SPAWN waitpid                                yes waitpid=81607 status=0 exited=1 code=0
+SPAWN child stdout -> socketpair             yes hello from child
+
+SPAWN child stdout -> TCP socket             yes hello from child
+
+SPAWN execve envp reaches child              yes from-execve
+
+SPAWN socket fd inherited by number          yes child getsockname(fd 3) ok
+
+SPAWN listening socket as child stdin        yes child getsockname(0) ok
+
+SPAWN spawn cost                             yes 10/10 ok, 8.5 ms per spawn+exit
+R_SPAWN DONE
+PROBE-DONE

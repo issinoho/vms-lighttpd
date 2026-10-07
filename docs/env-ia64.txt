@@ -1,0 +1,178 @@
+
+=== system
+version   V8.4-2L3
+arch      IA64
+hw_name   HP rx2660  (1.59GHz/6.0MB)
+node      <redacted>
+cpus      1
+memsize   524240 pages of 8192 bytes
+pgflquota 512000  wsextent 1089536
+bytlm     127040  fillm 150  prclm 10  tqlm 100  biolm 150  diolm 150
+maxprocesscnt 840  channelcnt 512
+%DCL-W-IVKEYW, unrecognized keyword - check validity and spelling
+ \ODSTRUCTURE\
+free blocks 49893760 of 71132960
+
+=== products (web, php, ssl, compilers)
+------------------------------------ ----------- ---------
+PRODUCT                              KIT TYPE    STATE
+------------------------------------ ----------- ---------
+VMSPORTS I64VMS PERL534 V5.34-1      Full LP     Installed
+VSI I64VMS C V7.4-1                  Full LP     Installed
+VSI I64VMS CXX V7.4-6                Full LP     Installed
+VSI I64VMS GNV V3.0-2                Full LP     Installed
+VSI I64VMS MMS V4.0-5                Full LP     Installed
+VSI I64VMS SSL V1.4-503              Full LP     Installed
+VSI I64VMS SSL1 V1.0-2UA             Full LP     Installed
+VSI I64VMS SSL111 V1.1-1W            Full LP     Installed
+VSI I64VMS SSL3 V3.0-22              Full LP     Installed
+VSI I64VMS SSL31 V3.1-4              Full LP     Installed
+VSI I64VMS TCPIP V6.0-31             Full LP     Installed
+------------------------------------ ----------- ---------
+11 items found
+
+=== cc/version
+VSI C V7.4-001 on OpenVMS IA64 V8.4-2L3
+
+=== TCP/IP
+
+  VSI TCP/IP Services for OpenVMS Industry Standard 64 Version V6.0-31
+  on an HP rx2660  (1.59GHz/6.0MB) running OpenVMS V8.4-2L3
+
+IPv6: 
+ 
+Service             Port  Proto    Process          Address            State
+ 
+ESNMP                705  UDP      ESNMP            0.0.0.0             Disabled
+FTP                   21  TCP      TCPIP$FTP        0.0.0.0             Enabled
+LPD                  515  TCP      TCPIP$LPD        0.0.0.0             Enabled
+NTP                  123  UDP      TCPIP$NTP        0.0.0.0             Enabled
+SMTP                  25  TCP      TCPIP$SMTP       0.0.0.0             Enabled
+SNMP                 161  UDP      TCPIP$SNMP       0.0.0.0             Enabled
+SSHD22                22  TCP      SSHD22           0.0.0.0             Enabled
+TELNET                23  TCP      not defined      0.0.0.0             Enabled
+
+=== listeners on 80/443/8080/8443 and our test range 18080-18099, 19000-19031
+%SEARCH-I-NOMATCHES, no strings matched
+
+=== web servers already running
+
+=== PHP kit
+--- where is PHP? (startup procedures, PHP.EXE images on the system disk)
+%DIRECT-W-NOFILES, no files found
+%DIRECT-W-NOFILES, no files found
+
+(LNM$PROCESS_TABLE)
+
+(LNM$JOB_898F9F00)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+%SHOW-S-NOTRAN, no translation for logical name PHP_*
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[BIN]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[000000]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[EXTENSIONS]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[LIB...]*.EXE;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[ETC]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+--- php -v
+%DCL-W-ACTIMAGE, error activating image PHP_ROOT:[BIN]PHP.EXE
+-CLI-E-IMGNAME, image file PHP_ROOT:[BIN]PHP.EXE;
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+--- php -m
+%DCL-W-ACTIMAGE, error activating image PHP_ROOT:[BIN]PHP.EXE
+-CLI-E-IMGNAME, image file PHP_ROOT:[BIN]PHP.EXE;
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+--- php --ini
+%DCL-W-ACTIMAGE, error activating image PHP_ROOT:[BIN]PHP.EXE
+-CLI-E-IMGNAME, image file PHP_ROOT:[BIN]PHP.EXE;
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+--- php -i (selected)
+%SEARCH-I-NOMATCHES, no strings matched
+--- php-cgi candidates
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[000000...]*CGI*.EXE;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[000000...]*FPM*.EXE;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[CSWS]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+
+=== SSL3 kit
+
+(LNM$PROCESS_TABLE)
+
+(LNM$JOB_898F9F00)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+  "SSL3$CERT" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$CERTS" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$COM" = "SSL3$ROOT:[COM]"
+  "SSL3$CONF" = "SSL3$ROOT:[DEMOCA.CONF]"
+  "SSL3$CRL" = "SSL3$ROOT:[DEMOCA.CRL]"
+  "SSL3$EXAMPLES" = "SYS$COMMON:[SYSHLP.EXAMPLES.SSL3]"
+  "SSL3$EXE" = "SSL3$ROOT:[IA64_EXE]"
+  "SSL3$INCLUDE" = "SSL3$ROOT:[INCLUDE]"
+  "SSL3$KEY" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$KEYS" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$LIB" = "SSL3$ROOT:[LIB]"
+  "SSL3$MODULES" = "SSL3$ROOT:[MODULES]"
+  "SSL3$PRIVATE" = "SSL3$ROOT:[DEMOCA.PRIVATE]"
+  "SSL3$ROOT" = "SYS$SYSDEVICE:[VMS$COMMON.SSL3.]"
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+SYS$COMMON:[SYSLIB]SSL3$LIBCRYPTO_SHR.EXE;1
+SYS$COMMON:[SYSLIB]SSL3$LIBCRYPTO_SHR32.EXE;1
+SYS$COMMON:[SYSLIB]SSL3$LIBSSL_SHR.EXE;1
+SYS$COMMON:[SYSLIB]SSL3$LIBSSL_SHR32.EXE;1
+OpenSSL 3.0.22 25 Aug 2026 (Library: OpenSSL 3.0.22 25 Aug 2026)
+built on: Thu Aug 27 23:46:27 2026 UTC
+platform: vms-ia64-p64
+options:  bn(64,64)
+compiler: CC/DECC  /DEFINE=(OPENSSL_PIC,OPENSSL_NO_ASM,OPENSSL_BUILDING_OPENSSL,_SOCKADDR_LEN,NDEBUG,OPENSSLDIR="""SSL3$ROOT:[000000]""",ENGINESDIR="""SSL3$ENGINES:""",MODULESDIR="""SSL3$MODULES:"""'extradefines')/INCLUDE=()/DEFINE=(OPENSSL_PIC,OPENSSL_NO_ASM,OPENSSL_BUILDING_OPENSSL,_SOCKADDR_LEN,NDEBUG,OPENSSLDIR="""SSL3$ROOT:[000000]""",ENGINESDIR="""SSL3$ENGINES:""",MODULESDIR="""SSL3$MODULES:"""'extradefines')
+OPENSSLDIR: "SSL3$ROOT:[000000]"
+ENGINESDIR: "SSL3$ENGINES:"
+MODULESDIR: "SSL3$MODULES:"
+Seeding source: os-specific
+CPUINFO: N/A
+SSL3 for OpenVMS V3.0(22) Aug 27 2026 (Library: SSL3 for OpenVMS V3.0(22) Aug 27 2026)
+
+=== zlib / pcre2 install trees in this and the sibling work directories
+%DIRECT-W-NOFILES, no files found
+
+=== MariaDB (our vms-mariadb server)
+%SEARCH-I-NOMATCHES, no strings matched
+
+=== decc$ logicals
+
+(LNM$PROCESS_TABLE)
+
+(LNM$JOB_898F9F00)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+  "DECC$CRTLMAP" = "SYS$SHARE:DECC$SHR"
+  "DECC$SHR_AV" = "DECC$SHR"
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+
+=== batch queues
+Batch queue SYS$BATCH, idle, on <node>::
+RECON-DONE

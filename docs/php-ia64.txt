@@ -1,0 +1,91 @@
+
+
+
+=== PHP logicals
+   "PHP$ROOT" [super] = "<node>$DKA800:[SYS0.SYSCOMMON.php.]" [concealed] (LNM$SYSTEM_TABLE)
+%SHOW-S-NOTRAN, no translation for logical name PHP_ROOT
+--- using php$root
+PHP$ROOT:[000000]bin.DIR;1
+PHP$ROOT:[000000]csws.DIR;1
+PHP$ROOT:[000000]etc.DIR;1
+PHP$ROOT:[000000]include.DIR;1
+PHP$ROOT:[000000]lib.DIR;1
+PHP$ROOT:[000000]php$define_root.com;1
+PHP$ROOT:[000000]php$pcsi_preconfigure.com;1
+PHP$ROOT:[000000]php$shutdown.com;1
+PHP$ROOT:[000000]php$startup.com;1
+PHP$ROOT:[bin]php.exe;1
+%DIRECT-E-OPENIN, error opening PHP$ROOT:[EXTENSIONS]*.*;* as input
+-RMS-E-DNF, directory not found
+-SYSTEM-W-NOSUCHFILE, no such file
+=== php -v
+PHP 8.0.10 (cli) (built: Dec  6 2022 11:42:11) ( NTS )
+Copyright (c) The PHP Group
+Zend Engine v4.0.10, Copyright (c) Zend Technologies
+    with Zend OPcache v8.0.10, Copyright (c), by Zend Technologies
+=== php -m
+[PHP Modules]
+Core
+ctype
+date
+dom
+fileinfo
+filter
+hash
+json
+libxml
+pcre
+PDO
+pdo_sqlite
+Phar
+posix
+Reflection
+session
+SimpleXML
+SPL
+sqlite3
+standard
+tokenizer
+xml
+xmlreader
+xmlwriter
+Zend OPcache
+
+[Zend Modules]
+Zend OPcache
+
+=== php -i (selected)
+Server API
+Loaded Configuration File
+extension_dir
+=== php_cgi
+%DCL-W-ACTIMAGE, error activating image PHP$ROOT:[BIN]PHP_CGI.EXE
+-CLI-E-IMAGEFNF, image file not found <node>$DKA800:[SYS0.SYSCOMMON.PHP.][BIN]PHP_CGI.EXE;
+%SEARCH-I-NOMATCHES, no strings matched
+PHPX-DONE
+
+
+PHP$ROOT:[csws]mod_php.exe;1
+                            133   6-DEC-2022 11:56:28.44
+PHP$ROOT:[csws]php-cgi.exe;1
+                            230   6-DEC-2022 11:42:39.34
+PHP$ROOT:[lib]extensions.DIR;1
+                              2   7-OCT-2026 23:23:24.31
+PHP$ROOT:[lib]php$shr.exe;1
+                          63401   6-DEC-2022 11:42:07.44
+PHP$ROOT:[etc]cacert.pem;1
+                            505   6-DEC-2022 10:58:21.52
+PHP$ROOT:[etc]php.ini;1
+                              3   6-DEC-2022 10:58:21.60
+PHP$ROOT:[etc]php.ini-dev;1
+                            142   6-DEC-2022 10:58:21.60
+PHP$ROOT:[etc]php.ini-prod;1
+                            142   6-DEC-2022 10:58:21.60
+PHP 8.0.10 (cgi-fcgi) (built: Dec  6 2022 11:42:29)
+Copyright (c) The PHP Group
+Zend Engine v4.0.10, Copyright (c) Zend Technologies
+    with Zend OPcache v8.0.10, Copyright (c), by Zend Technologies
+%SEARCH-I-NOMATCHES, no strings matched
+PHP$ROOT:[lib.extensions]mysqli.exe;1
+PHP$ROOT:[lib.extensions]mysqlnd.exe;1
+PHP$ROOT:[lib.extensions]pdo_mysql.exe;1

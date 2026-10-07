@@ -52,13 +52,16 @@ int main(void)
   char d[200];
   int r;
 
+#ifdef RLIMIT_NOFILE
   {
     struct rlimit rl;
     r = getrlimit(RLIMIT_NOFILE, &rl);
-    snprintf(d, sizeof d, "cur=%lld max=%lld  sysconf(_SC_OPEN_MAX)=%ld", (long long) rl.rlim_cur,
-             (long long) rl.rlim_max, sysconf(_SC_OPEN_MAX));
+    snprintf(d, sizeof d, "cur=%lld max=%lld", (long long) rl.rlim_cur, (long long) rl.rlim_max);
     say("RLIMIT_NOFILE", r == 0, r ? err() : d);
   }
+#endif
+  snprintf(d, sizeof d, "%ld", sysconf(_SC_OPEN_MAX));
+  say("sysconf(_SC_OPEN_MAX)", 1, d);
 
   /* Many concurrent connections: open client+server pairs until failure. */
   {
@@ -78,13 +81,16 @@ int main(void)
     }
     snprintf(d, sizeof d, "%d connections (%d fds) before stop: %s", n, 2 * n + 1, why);
     say("concurrent connections", n >= 500, d);
-    /* poll() over every accepted socket with one in ten readable */
+    /* leave quota headroom (the loop stopped at a quota limit), then
+       poll() over every accepted socket with one in ten readable */
+    for (i = 0; i < 4 && n > 0; i++) { n--; close(cfd[n]); close(afd[n]); }
     for (i = 0; i < n; i += 10) send(cfd[i], "x", 1, 0);
     for (i = 0; i < n; i++) { p[i].fd = afd[i]; p[i].events = POLLIN; p[i].revents = 0; }
     gettimeofday(&t0, NULL);
     for (r = 0; r < 100; r++) ready = poll(p, (nfds_t) n, 1000);
     gettimeofday(&t1, NULL);
-    snprintf(d, sizeof d, "%d fds, %d ready (expect %d), %.3f ms per call", n, ready, (n + 9) / 10,
+    snprintf(d, sizeof d, "%d fds, %d ready (expect %d) %s, %.3f ms per call", n, ready, (n + 9) / 10,
+             ready < 0 ? err() : "",
              ((t1.tv_sec - t0.tv_sec) * 1000.0 + (t1.tv_usec - t0.tv_usec) / 1000.0) / 100);
     say("poll() over all connections", ready == (n + 9) / 10, d);
     for (i = 0; i < n; i++) { close(cfd[i]); close(afd[i]); }
@@ -146,7 +152,7 @@ int main(void)
 #endif
       memset(&a6, 0, sizeof a6);
       a6.sin6_family = AF_INET6;
-      a6.sin6_addr = in6addr_any;
+      /* all-zero address = in6addr_any (avoid the data symbol) */
       r = bind(s6, (struct sockaddr *) &a6, sizeof a6);
       listen(s6, 5);
       getsockname(s6, (struct sockaddr *) &a6, &len);

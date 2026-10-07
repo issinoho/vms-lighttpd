@@ -59,14 +59,21 @@ min). The build is `vmsport/BUILD.COM` + `DESCRIP.MMS` (MMS ships with VMS).
 
 ## D4. PHP: a persistent FastCGI pool of php-cgi processes
 
-**Status:** proposed (2026-10-07); depends on Phase 0 finding a FastCGI-capable php-cgi in
-VSI's PHP kit.
+**Status:** proposed (2026-10-07). Phase 0 (x86, 2026-10-07): `PHP$ROOT` (system logical; briefly `PHP_ROOT` on 2026-10-07,
+`[SYS0.SYSCOMMON.APACHE.PHP.]`) is PHP 8.1.23 built 13-Sep-2023; `PHP$ROOT:[BIN]PHP_CGI.EXE`
+is the `cgi-fcgi` SAPI and has `-b <address:port>` (FastCGI server mode). opcache is
+`PHP$ROOT:[EXTENSIONS]PHP_OPCACHE.EXE`, not loaded by the system `PHP.INI`; the pool will use
+its own ini. An older VSI 8.0 kit also sits in `SYS$COMMON:[PHP]` (unused). IA64 (PHP
+installed there on 2026-10-07): VSI's 8.0.10 kit, `PHP$ROOT:[CSWS]PHP-CGI.EXE` (`cgi-fcgi`),
+opcache built in. See docs/PHASE0.md.
 
 N detached `php-cgi -b 127.0.0.1:<port>` processes (`PHP_FCGI_CHILDREN=0`, which needs no
 `fork`), started and restarted by a DCL procedure; lighttpd's `fastcgi.server` lists all
 N as hosts and balances over them. No process starts per request. lighttpd does not spawn
-backends itself (`bin-path`): that needs passing a listening socket to a child, which
-`probes/r_spawn.c` tests.
+backends itself (`bin-path`). `probes/r_spawn.c` shows it could: a listening socket
+reaches a `vfork`+`execve` child, as an inherited fd or as stdin. We still use the external
+pool, because each spawn costs ~60 ms on the x86 VM and the pool keeps process control
+in DCL.
 
 Rejected: plain CGI (a process per request); embedding libphp in lighttpd (no upstream SAPI
 for it; VSI's MOD_PHP.EXE is tied to Apache's module ABI).
@@ -75,7 +82,32 @@ for it; VSI's MOD_PHP.EXE is tied to Apache's module ABI).
 
 **Status:** approved by the user (2026-10-07).
 
-Tests our ports together. Needs PHP's `mysqli` extension on the node running PHP. VSI's PHP
-8.0 kit listed `MYSQLI.EXE`/`MYSQLND.EXE`/`PDO_MYSQL.EXE` as **IA64 only**; Phase 0 checks the
-installed x86 kit. If x86 has none, the alternatives are PHP on IA64 using the x86 server
-over TCP, or SQLite3/PostgreSQL (VSI LIBPQ is installed on x86) for the test only.
+Tests our ports together. Needs PHP's `mysqli`. Phase 0 (x86): PHP 8.1.23 has `mysqli`,
+`mysqlnd` and `pdo_mysql` built in (`php -m`), and the vms-mariadb server (`MARIADBD_3306`)
+listens on port 3306. So phpBB runs on x86 against it, over TCP to 127.0.0.1:3306.
+Fallbacks if needed: `PHP_SQLITE3.EXE` / `PHP_PDO_PGSQL.EXE` are in `PHP$ROOT:[EXTENSIONS]`.
+IA64's PHP 8.0.10 loads `mysqli`/`pdo_mysql` from `PHP$ROOT:[LIB.EXTENSIONS]` when its ini
+names them, so it could use the x86 server over TCP. But it has no gd or mbstring, so the
+full phpBB test runs on x86.
+
+## D6. Dependencies: build vms-zlib and vms-pcre2 into this work directory
+
+**Status:** proposed (2026-10-07).
+
+Neither node has a vms-zlib or vms-pcre2 install tree in this work directory or a sibling
+one. PCRE2 is needed for lighttpd's regex conditionals and mod_rewrite, which phpBB uses;
+zlib for mod_deflate. Build both with their own repos' tooling into
+`<workdir>.ZLIB-1_3_2.INSTALL_<arch>]` and `<workdir>.PCRE2-10_49.INSTALL_<arch>]` on each
+node. x86 also has a `zlib.h` in the default include path, origin unknown; we don't use it, so
+the zlib version stays pinned.
+
+## D7. Connection capacity comes from process quotas
+
+**Status:** finding (2026-10-07); acting on it is Phase 5.
+
+`r_net2`: every socket uses BYTLM. Our accounts reach 168 (x86, BYTLM 498784) and 44 (IA64,
+BYTLM 127040) concurrent connections; FILLM (1000 / 150) is the fd limit
+(`sysconf(_SC_OPEN_MAX)`), and the CRTL has no `getrlimit`. The server's account needs high
+BYTLM and FILLM. IA64's system CHANNELCNT is 512, which caps one process at about 250
+connections unless SYSGEN is changed. lighttpd's `server.max-connections` must be set below
+the quota-derived limit; the startup procedure computes it.

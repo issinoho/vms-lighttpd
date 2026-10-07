@@ -1,0 +1,377 @@
+PROBE compiler: cc/names=(as_is,shortened)/float=ieee/define=(_LARGEFILE,_USE_STD_STAT,_POSIX_EXIT)/nolist/object=probe_tmp.obj
+VSI C V7.4-001 on OpenVMS IA64 V8.4-2L3
+RESULT h_crypt_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_dlfcn_h cc=1 link=-
+RESULT h_getopt_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_grp_h cc=1 link=-
+RESULT h_inttypes_h cc=1 link=-
+RESULT h_malloc_h cc=1 link=-
+RESULT h_netinet_tcp_h cc=1 link=-
+RESULT h_pcre2_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_poll_h cc=1 link=-
+RESULT h_port_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_pwd_h cc=1 link=-
+RESULT h_signal_h cc=1 link=-
+RESULT h_spawn_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_stdatomic_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_stdint_h cc=1 link=-
+RESULT h_stdlib_h cc=1 link=-
+RESULT h_strings_h cc=1 link=-
+RESULT h_syslog_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_devpoll_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_epoll_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_event_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_filio_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_inotify_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_ioctl_h cc=1 link=-
+RESULT h_sys_loadavg_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_mman_h cc=1 link=-
+RESULT h_sys_poll_h cc=1 link=-
+RESULT h_sys_random_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_resource_h cc=1 link=-
+RESULT h_sys_select_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_sendfile_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT h_sys_stat_h cc=1 link=-
+RESULT h_sys_time_h cc=1 link=-
+RESULT h_sys_types_h cc=1 link=-
+RESULT h_sys_uio_h cc=1 link=-
+RESULT h_sys_un_h cc=1 link=-
+RESULT h_sys_wait_h cc=1 link=-
+RESULT h_time_h cc=1 link=-
+RESULT h_unistd_h cc=1 link=-
+RESULT h_zlib_h cc=4 link=- %CC-F-NOINCLFILEF
+RESULT f_accept4 cc=1 link=0
+RESULT f_arc4random_buf cc=1 link=0
+RESULT f_chroot cc=1 link=0
+RESULT f_clock_gettime cc=1 link=1
+RESULT f_copy_file_range cc=1 link=0
+RESULT f_crypt cc=1 link=1
+RESULT f_crypt_r cc=1 link=0
+RESULT f_epoll_ctl cc=1 link=0
+RESULT f_explicit_bzero cc=1 link=0
+RESULT f_explicit_memset cc=1 link=0
+RESULT f_fchdir cc=1 link=0
+RESULT f_fdatasync cc=1 link=0
+RESULT f_fork cc=1 link=0
+RESULT f_fstatat cc=1 link=0
+RESULT f_getaddrinfo cc=1 link=1
+RESULT f_getentropy cc=1 link=0
+RESULT f_getloadavg cc=1 link=0
+RESULT f_getpwnam cc=1 link=1
+RESULT f_getrandom cc=1 link=0
+RESULT f_getrlimit cc=1 link=0
+RESULT f_getuid cc=1 link=1
+RESULT f_gmtime_r cc=1 link=1
+RESULT f_inet_aton cc=1 link=1
+RESULT f_inet_pton cc=1 link=1
+RESULT f_initgroups cc=1 link=0
+RESULT f_issetugid cc=1 link=0
+RESULT f_jrand48 cc=1 link=1
+RESULT f_kqueue cc=1 link=0
+RESULT f_localtime_r cc=1 link=1
+RESULT f_lstat cc=1 link=1
+RESULT f_madvise cc=1 link=0
+RESULT f_malloc_trim cc=1 link=0
+RESULT f_mallopt cc=1 link=0
+RESULT f_mempcpy cc=1 link=0
+RESULT f_memset_explicit cc=1 link=0
+RESULT f_memset_s cc=1 link=0
+RESULT f_mkostemp cc=1 link=1
+RESULT f_mkstemp cc=1 link=1
+RESULT f_mmap cc=1 link=1
+RESULT f_openat cc=1 link=0
+RESULT f_pipe cc=1 link=1
+RESULT f_pipe2 cc=1 link=0
+RESULT f_poll cc=1 link=1
+RESULT f_port_create cc=1 link=0
+RESULT f_posix_spawn cc=1 link=0
+RESULT f_pread cc=1 link=1
+RESULT f_preadv cc=1 link=0
+RESULT f_pwrite cc=1 link=1
+RESULT f_pwritev cc=1 link=0
+RESULT f_realpath cc=1 link=1
+RESULT f_select cc=1 link=1
+RESULT f_sendfile cc=1 link=0
+RESULT f_setgroups cc=1 link=0
+RESULT f_setrlimit cc=1 link=0
+RESULT f_setsid cc=1 link=1
+RESULT f_sigaction cc=1 link=1
+RESULT f_signal cc=1 link=1
+RESULT f_socketpair cc=1 link=1
+RESULT f_splice cc=1 link=0
+RESULT f_srandom cc=1 link=1
+RESULT f_strerror_r cc=1 link=1
+RESULT f_strptime cc=1 link=1
+RESULT f_strtoll cc=1 link=1
+RESULT f_timegm cc=1 link=0
+RESULT f_umask cc=1 link=1
+RESULT f_vfork cc=1 link=0
+RESULT f_writev cc=1 link=1
+RESULT g_accept4 cc=2 link=- %CC-E-UNDECLARED
+RESULT g_arc4random_buf cc=2 link=- %CC-E-UNDECLARED
+RESULT g_chroot cc=2 link=- %CC-E-UNDECLARED
+RESULT g_clock_gettime cc=1 link=1
+RESULT g_copy_file_range cc=2 link=- %CC-E-UNDECLARED
+RESULT g_crypt cc=1 link=1
+RESULT g_crypt_r cc=2 link=- %CC-E-UNDECLARED
+RESULT g_epoll_ctl cc=2 link=- %CC-E-UNDECLARED
+RESULT g_explicit_bzero cc=2 link=- %CC-E-UNDECLARED
+RESULT g_explicit_memset cc=2 link=- %CC-E-UNDECLARED
+RESULT g_fchdir cc=2 link=- %CC-E-UNDECLARED
+RESULT g_fdatasync cc=2 link=- %CC-E-UNDECLARED
+RESULT g_fork cc=2 link=- %CC-E-UNDECLARED
+RESULT g_fstatat cc=2 link=- %CC-E-UNDECLARED
+RESULT g_getaddrinfo cc=1 link=1
+RESULT g_getentropy cc=2 link=- %CC-E-UNDECLARED
+RESULT g_getloadavg cc=2 link=- %CC-E-UNDECLARED
+RESULT g_getpwnam cc=1 link=1
+RESULT g_getrandom cc=2 link=- %CC-E-UNDECLARED
+RESULT g_getrlimit cc=2 link=- %CC-E-UNDECLARED
+RESULT g_getuid cc=1 link=1
+RESULT g_gmtime_r cc=1 link=1
+RESULT g_inet_aton cc=1 link=1
+RESULT g_inet_pton cc=1 link=1
+RESULT g_initgroups cc=2 link=- %CC-E-UNDECLARED
+RESULT g_issetugid cc=2 link=- %CC-E-UNDECLARED
+RESULT g_jrand48 cc=1 link=1
+RESULT g_kqueue cc=2 link=- %CC-E-UNDECLARED
+RESULT g_localtime_r cc=1 link=1
+RESULT g_lstat cc=1 link=1
+RESULT g_madvise cc=2 link=- %CC-E-UNDECLARED
+RESULT g_malloc_trim cc=2 link=- %CC-E-UNDECLARED
+RESULT g_mallopt cc=2 link=- %CC-E-UNDECLARED
+RESULT g_mempcpy cc=2 link=- %CC-E-UNDECLARED
+RESULT g_memset_explicit cc=2 link=- %CC-E-UNDECLARED
+RESULT g_memset_s cc=2 link=- %CC-E-UNDECLARED
+RESULT g_mkostemp cc=1 link=1
+RESULT g_mkstemp cc=1 link=1
+RESULT g_mmap cc=1 link=1
+RESULT g_openat cc=2 link=- %CC-E-UNDECLARED
+RESULT g_pipe cc=1 link=1
+RESULT g_pipe2 cc=2 link=- %CC-E-UNDECLARED
+RESULT g_poll cc=1 link=1
+RESULT g_port_create cc=2 link=- %CC-E-UNDECLARED
+RESULT g_posix_spawn cc=2 link=- %CC-E-UNDECLARED
+RESULT g_pread cc=1 link=1
+RESULT g_preadv cc=2 link=- %CC-E-UNDECLARED
+RESULT g_pwrite cc=1 link=1
+RESULT g_pwritev cc=2 link=- %CC-E-UNDECLARED
+RESULT g_realpath cc=1 link=1
+RESULT g_select cc=1 link=1
+RESULT g_sendfile cc=2 link=- %CC-E-UNDECLARED
+RESULT g_setgroups cc=2 link=- %CC-E-UNDECLARED
+RESULT g_setrlimit cc=2 link=- %CC-E-UNDECLARED
+RESULT g_setsid cc=1 link=1
+RESULT g_sigaction cc=1 link=1
+RESULT g_signal cc=1 link=1
+RESULT g_socketpair cc=1 link=1
+RESULT g_splice cc=2 link=- %CC-E-UNDECLARED
+RESULT g_srandom cc=1 link=1
+RESULT g_strerror_r cc=1 link=1
+RESULT g_strptime cc=1 link=1
+RESULT g_strtoll cc=1 link=1
+RESULT g_timegm cc=2 link=- %CC-E-UNDECLARED
+RESULT g_umask cc=1 link=1
+RESULT g_vfork cc=2 link=- %CC-E-UNDECLARED
+RESULT g_writev cc=1 link=1
+--- r_files (CRTL defaults)
+FILE f_stmlf.txt rfm=stmlf wrote 2000  st_size 2000  read 2000  same-bytes yes
+FILE f_stmlf.txt pread(100 @ 1000) 100  matches yes
+FILE f_stmlf.txt lseek(SEEK_END) 2000
+FILE f_stmlf.txt mmap ok  first-2000-bytes-match yes
+FILE f_stm.txt rfm=stm   wrote 2000  st_size 5960  read 3960  same-bytes NO
+FILE f_stm.txt pread(100 @ 1000) 1  matches NO
+FILE f_stm.txt lseek(SEEK_END) 5960
+FILE f_stm.txt mmap ok  first-2000-bytes-match NO
+FILE f_var.txt rfm=var   wrote 2000  st_size 7920  read 3960  same-bytes NO
+FILE f_var.txt pread(100 @ 1000) 100  matches NO
+FILE f_var.txt lseek(SEEK_END) 7920
+FILE f_var.txt mmap ok  first-2000-bytes-match NO
+%SYSTEM-F-ACCVIO, access violation, reason mask=00, virtual address=0000000000000000, PC=FFFFFFFF8453AE21, PS=0000001B
+%TRACE-F-TRACEBACK, symbolic stack dump follows
+image     module    routine               line      rel PC           abs PC     
+DECC$SHR  C$AUX_OPEN  decc$$aux_open     58572 0000000000006811 FFFFFFFF8453AE21
+DECC$SHR  C$OPEN  fopen                  40346 0000000000000DD2 FFFFFFFF84572362
+r_files  r_files  trial                   6698 0000000000000472 0000000000020472
+r_files  r_files  main                    6736 0000000000000D32 0000000000020D32
+r_files  r_files  __main                  6731 0000000000000BF2 0000000000020BF2
+                                             0 FFFFFFFF80A020B2 FFFFFFFF80A020B2
+DCL                                          0 000000000007D422 000000007AE45422
+%TRACE-I-END, end of TRACE stack dump
+--- r_files (feature logicals)
+FILE f_stmlf.txt rfm=stmlf wrote 2000  st_size 2000  read 2000  same-bytes yes
+FILE f_stmlf.txt pread(100 @ 1000) 100  matches yes
+FILE f_stmlf.txt lseek(SEEK_END) 2000
+FILE f_stmlf.txt mmap ok  first-2000-bytes-match yes
+FILE f_stm.txt rfm=stm   wrote 2000  st_size 5960  read 3960  same-bytes NO
+FILE f_stm.txt pread(100 @ 1000) 1  matches NO
+FILE f_stm.txt lseek(SEEK_END) 5960
+FILE f_stm.txt mmap ok  first-2000-bytes-match NO
+FILE f_var.txt rfm=var   wrote 2000  st_size 7920  read 3960  same-bytes NO
+FILE f_var.txt pread(100 @ 1000) 100  matches NO
+FILE f_var.txt lseek(SEEK_END) 7920
+FILE f_var.txt mmap ok  first-2000-bytes-match NO
+%SYSTEM-F-ACCVIO, access violation, reason mask=00, virtual address=0000000000000000, PC=FFFFFFFF8453AE21, PS=0000001B
+%TRACE-F-TRACEBACK, symbolic stack dump follows
+image     module    routine               line      rel PC           abs PC     
+DECC$SHR  C$AUX_OPEN  decc$$aux_open     58572 0000000000006811 FFFFFFFF8453AE21
+DECC$SHR  C$OPEN  fopen                  40346 0000000000000DD2 FFFFFFFF84572362
+r_files  r_files  trial                   6698 0000000000000472 0000000000020472
+r_files  r_files  main                    6736 0000000000000D32 0000000000020D32
+r_files  r_files  __main                  6731 0000000000000BF2 0000000000020BF2
+                                             0 FFFFFFFF80A020B2 FFFFFFFF80A020B2
+DCL                                          0 000000000007D422 000000007AE45422
+%TRACE-I-END, end of TRACE stack dump
+--- r_net (CRTL defaults)
+NET SO_REUSEADDR                       yes 
+NET bind 127.0.0.1:0                   yes 
+NET fcntl O_NONBLOCK on socket         yes 
+NET non-blocking accept -> EWOULDBLOCK yes errno=35 (I/O stream empty)
+NET non-blocking connect               yes errno=36 (operation in progress)
+NET poll() on listening socket         yes 
+NET accept after poll                  yes 
+NET poll() POLLOUT on connecting socket yes 
+NET TCP_NODELAY                        yes 
+NET SO_KEEPALIVE                       yes 
+NET SO_RCVTIMEO                        yes 
+NET send/recv                          yes 
+NET MSG_DONTWAIT on empty socket       yes errno=35 (I/O stream empty)
+NET recv after peer close returns 0    yes 
+NET getaddrinfo localhost              yes 
+NET getaddrinfo passive                yes 
+NET AF_INET6 socket                    yes 
+NET IPV6_V6ONLY=0 (dual stack)         yes 
+NET AF_UNIX socket                     yes 
+NET AF_UNIX bind                       NO  errno=65535 (no logical name match)
+NET socketpair                         yes 
+R_NET DONE
+--- r_net (feature logicals)
+NET SO_REUSEADDR                       yes 
+NET bind 127.0.0.1:0                   yes 
+NET fcntl O_NONBLOCK on socket         yes 
+NET non-blocking accept -> EWOULDBLOCK yes errno=35 (I/O stream empty)
+NET non-blocking connect               yes errno=36 (operation in progress)
+NET poll() on listening socket         yes 
+NET accept after poll                  yes 
+NET poll() POLLOUT on connecting socket yes 
+NET TCP_NODELAY                        yes 
+NET SO_KEEPALIVE                       yes 
+NET SO_RCVTIMEO                        yes 
+NET send/recv                          yes 
+NET MSG_DONTWAIT on empty socket       yes errno=35 (I/O stream empty)
+NET recv after peer close returns 0    yes 
+NET getaddrinfo localhost              yes 
+NET getaddrinfo passive                yes 
+NET AF_INET6 socket                    yes 
+NET IPV6_V6ONLY=0 (dual stack)         yes 
+NET AF_UNIX socket                     yes 
+NET AF_UNIX bind                       NO  errno=65535 (no logical name match)
+NET socketpair                         yes 
+R_NET DONE
+
+    struct rlimit rl;
+..................^
+%CC-E-INCOMPNOLINK, In this declaration, "rl" has no linkage and is of an incomplete type.
+at line number 56 in file USER$ROOT:[IAIN.vms_lighttpd.LIGHTTPD_PROBE]r_net2.c;1
+
+    r = getrlimit(RLIMIT_NOFILE, &rl);
+........^
+%CC-I-IMPLICITFUNC, In this statement, the identifier "getrlimit" is implicitly declared as a function.
+at line number 57 in file USER$ROOT:[IAIN.vms_lighttpd.LIGHTTPD_PROBE]r_net2.c;1
+
+    r = getrlimit(RLIMIT_NOFILE, &rl);
+..................^
+%CC-E-UNDECLARED, In this statement, "RLIMIT_NOFILE" is not declared.
+at line number 57 in file USER$ROOT:[IAIN.vms_lighttpd.LIGHTTPD_PROBE]r_net2.c;1
+--- r_net2 did not compile
+--- r_proc (CRTL defaults)
+PROC sysconf(_SC_PAGESIZE)              yes 8192
+PROC sysconf(_SC_NPROCESSORS_ONLN)      yes 1
+PROC RLIMIT_NOFILE defined (getrlimit)  NO  
+PROC pthread_attr_setstacksize 1MB      yes 1048576
+PROC pthread_create + TSD key           yes 
+PROC PTHREAD_MUTEX_ERRORCHECK           yes 
+PROC PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP NO  
+PROC pthread_cond_timedwait timeout     yes 
+PROC clock_gettime(CLOCK_MONOTONIC)     yes 
+PROC sigaction + raise(SIGHUP)          yes 
+PROC sigprocmask block SIGTERM          yes 
+PROC mmap MAP_ANONYMOUS 64MB            yes 1E4000
+PROC malloc 4GB in 256MB blocks         yes 0 MB in 256MB blocks, highest 0
+PROC getpid                             yes 81377
+R_PROC DONE
+--- r_proc (feature logicals)
+PROC sysconf(_SC_PAGESIZE)              yes 8192
+PROC sysconf(_SC_NPROCESSORS_ONLN)      yes 1
+PROC RLIMIT_NOFILE defined (getrlimit)  NO  
+PROC pthread_attr_setstacksize 1MB      yes 1048576
+PROC pthread_create + TSD key           yes 
+PROC PTHREAD_MUTEX_ERRORCHECK           yes 
+PROC PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP NO  
+PROC pthread_cond_timedwait timeout     yes 
+PROC clock_gettime(CLOCK_MONOTONIC)     yes 
+PROC sigaction + raise(SIGHUP)          yes 
+PROC sigprocmask block SIGTERM          yes 
+PROC mmap MAP_ANONYMOUS 64MB            yes 1E4000
+PROC malloc 4GB in 256MB blocks         yes 0 MB in 256MB blocks, highest 0
+PROC getpid                             yes 81377
+R_PROC DONE
+
+    decc$set_child_standard_streams(in, out, -1);
+....^
+%CC-I-IMPLICITFUNC, In this statement, the identifier "decc$set_child_standard_streams" is implicitly declared as a function.
+at line number 86 in file USER$ROOT:[IAIN.vms_lighttpd.LIGHTTPD_PROBE]r_spawn.c;1
+--- r_spawn (CRTL defaults)
+SPAWN self = dka800:[users.][iain.vms_lighttpd.lighttpd_probe]r_spawn.exe;1
+SPAWN vfork+execv returns a pid              yes 
+SPAWN child stdout -> pipe                   yes hello from child
+
+SPAWN waitpid                                yes waitpid=81409 status=0 exited=1 code=0
+SPAWN child stdout -> socketpair             yes hello from child
+
+SPAWN child stdout -> TCP socket             yes hello from child
+
+SPAWN execve envp reaches child              yes from-execve
+
+SPAWN socket fd inherited by number          yes child getsockname(fd 3) ok
+
+SPAWN listening socket as child stdin        yes child getsockname(0) ok
+
+SPAWN spawn cost                             yes 10/10 ok, 8.6 ms per spawn+exit
+R_SPAWN DONE
+--- r_spawn (feature logicals)
+SPAWN self = /DKA800/USERS/IAIN/vms_lighttpd/LIGHTTPD_PROBE/r_spawn.exe
+SPAWN vfork+execv returns a pid              yes 
+SPAWN child stdout -> pipe                   yes hello from child
+
+SPAWN waitpid                                yes waitpid=81425 status=0 exited=1 code=0
+SPAWN child stdout -> socketpair             yes hello from child
+
+SPAWN child stdout -> TCP socket             yes hello from child
+
+SPAWN execve envp reaches child              yes from-execve
+
+SPAWN socket fd inherited by number          yes child getsockname(fd 3) ok
+
+SPAWN listening socket as child stdin        yes child getsockname(0) ok
+
+SPAWN spawn cost                             yes 10/10 ok, 8.9 ms per spawn+exit
+R_SPAWN DONE
+--- s_ssl3_tls
+TLS header OpenSSL 3.0.22 25 Aug 2026; library OpenSSL 3.0.22 25 Aug 2026
+TLS sizeof(long)=4 sizeof(void *)=4 sizeof(size_t)=4
+TLS EVP_EC_gen P-256                       yes 
+TLS self-signed certificate                yes 
+TLS server cert + key                      yes 
+TLS SSL_CTX_set_options (uint64_t)         yes 0x40520000
+TLS cipher configuration                   yes 
+TLS TLS handshake (socketpair, non-blocking) yes TLSv1.3 TLS_AES_128_GCM_SHA256 alpn=h2
+TLS ALPN selected h2                       yes 
+TLS SNI seen by server                     yes localhost
+TLS application data                       yes 
+TLS client has a resumable session         yes 
+TLS second handshake resumed               yes 
+TLS TLS 1.2 handshake                      yes TLSv1.2 ECDHE-ECDSA-AES256-GCM-SHA384
+TLS RAND_bytes                             yes 
+S_SSL3_TLS DONE
+PROBE-DONE

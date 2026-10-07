@@ -1,0 +1,345 @@
+
+=== system
+version   E9.2-4  
+arch      x86_64
+hw_name   QEMU Standard PC (Q35 + ICH9, 2009)
+node      <redacted>
+cpus      2
+memsize   930264 pages of 8192 bytes
+pgflquota 10000000  wsextent 1361920
+bytlm     498784  fillm 1000  prclm 10  tqlm 100  biolm 150  diolm 150
+maxprocesscnt 916  channelcnt 32768
+free blocks 13640004 of 33554432
+
+=== products (web, php, ssl, compilers)
+------------------------------------ ----------- ---------
+PRODUCT                              KIT TYPE    STATE
+------------------------------------ ----------- ---------
+VMSPORTS <node> PERL534 T5.34-1      Full LP     Installed
+VSI <node> APACHEWS V2.4-62          Full LP     Installed
+VSI <node> BASIC V1.11-1             Full LP     Installed
+VSI <node> C V7.7-3                  Full LP     Installed
+VSI <node> CIVETWEB V1.17-0          Full LP     Installed
+VSI <node> CXX V10.1-3U1             Full LP     Installed
+VSI <node> GNV V3.0-2F               Full LP     Installed
+VSI <node> MMS V4.0-5                Full LP     Installed
+VSI <node> PERL542 V5.42-0           Full LP     Installed
+VSI <node> PHP A8.0-0BUILD001        Full LP     Installed
+VSI <node> SSL3 V3.0-21              Full LP     Installed
+VSI <node> SSL31 V3.1-4              Full LP     Installed
+VSI <node> TCPIP V6.0-31             Full LP     Installed
+------------------------------------ ----------- ---------
+13 items found
+
+=== cc/version
+VSI C x86-64 V7.7-003 (GEM 50Z9T) on OpenVMS x86_64 E9.2-4  
+
+=== TCP/IP
+
+  VSI TCP/IP Services for OpenVMS x86_64 Version V6.0-31
+  on a QEMU Standard PC (Q35 + ICH9, 2009) running OpenVMS E9.2-4  
+
+IPv6: 
+ 
+Service             Port  Proto    Process          Address            State
+ 
+ESNMP                705  UDP      ESNMP            0.0.0.0             Disabled
+FTP                   21  TCP      TCPIP$FTP        0.0.0.0             Enabled
+NTP                  123  UDP      TCPIP$NTP        0.0.0.0             Enabled
+SMTP                  25  TCP      TCPIP$SMTP       0.0.0.0             Enabled
+SNMP                 161  UDP      TCPIP$SNMP       0.0.0.0             Enabled
+SSHD22                22  TCP      SSHD22           0.0.0.0             Disabled
+SSHD2222            2222  TCP      SSHD2222         0.0.0.0             Enabled
+SYSLOG               514  UDP      SYSLOGD          0.0.0.0             Disabled
+TELNET                23  TCP      not defined      0.0.0.0             Enabled
+XDM                  177  UDP      TCPIP$XDM        0.0.0.0             Enabled
+
+=== listeners on 80/443/8080/8443 and our test range 18080-18099, 19000-19031
+tcp        0      0  *.80                      *.*                       LISTEN
+
+=== web servers already running
+OpenVMS E9.2-4  on node <node>    7-OCT-2026 23:16:58.98   Uptime  6 06:38:08
+  Pid    Process Name    State  Pri      I/O       CPU       Page flts  Pages
+0002D8A7 APACHE$AWS      LEF      6     2223   0 00:00:02.41      2546   2877   
+0003B8A8 APACHE$AWS0000  LEF      4   164887   0 00:03:46.20     16402  16000   
+0003B8A9 APACHE$AWS0001  LEF      4   156925   0 00:03:35.97     16062  15634   
+000380AA APACHE$AWS0002  LEF      4   177977   0 00:04:06.35     17549  17138   
+0003B8AB APACHE$AWS0003  LEF      6   163618   0 00:03:46.82     16799  16344   
+0003B8AC APACHE$AWS0004  LEF      6   164456   0 00:03:46.26     16994  16495   
+000280AD APACHE$AWS0005  LEF      6   171809   0 00:03:57.59     17187  16773   
+0003B8AF APACHE$AWS0006  LEF      4   160327   0 00:03:39.60     17397  15753   
+0003B8B2 APACHE$AWS0007  LEF      4   141314   0 00:03:15.00     16189  14317   
+0003B8C6 APACHE$AWS0008  LEF      4    95738   0 00:02:09.57     13475  11848   
+00039CC7 APACHE$AWS0009  LEF      4    93001   0 00:02:06.18     12223  11803   
+
+=== PHP kit
+--- where is PHP? (startup procedures, PHP.EXE images on the system disk)
+SYS$SYSROOT:[SYS$STARTUP]PHP$STARTUP.COM;2
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.BIN]PHP.EXE;1
+                     13-SEP-2023 13:48:50.57
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.BIN]PHPDBG.EXE;1
+                     13-SEP-2023 13:49:22.97
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.BIN]PHPSHR.EXE;1
+                     13-SEP-2023 13:58:56.92
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.BIN]PHP_CGI.EXE;1
+                     13-SEP-2023 13:48:43.82
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.EXTENSIONS]PHP_CURL.EXE;1
+                     13-SEP-2023 13:48:07.82
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.EXTENSIONS]PHP_LDAP.EXE;1
+                     13-SEP-2023 13:48:12.26
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.EXTENSIONS]PHP_OPCACHE.EXE;1
+                     13-SEP-2023 13:49:40.94
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.EXTENSIONS]PHP_OPENVMS.EXE;1
+                     13-SEP-2023 13:48:14.79
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.EXTENSIONS]PHP_PDO_PGSQL.EXE;1
+                     13-SEP-2023 13:48:24.87
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.EXTENSIONS]PHP_PDO_SQLITE.EXE;1
+                     13-SEP-2023 13:48:30.04
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.EXTENSIONS]PHP_PGSQL.EXE;1
+                     13-SEP-2023 13:48:19.37
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.APACHE.PHP.EXTENSIONS]PHP_SQLITE3.EXE;1
+                     13-SEP-2023 13:48:32.73
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.php.bin]php.exe;1
+                      6-APR-2022 13:22:56.00
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.php.csws]php-cgi.exe;1
+                      6-APR-2022 13:23:25.00
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.php.lib]php$shr.exe;1
+                      6-APR-2022 13:21:57.00
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.BIN]PHP.EXE;1
+                     13-SEP-2023 13:48:50.57
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.BIN]PHPDBG.EXE;1
+                     13-SEP-2023 13:49:22.97
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.BIN]PHPSHR.EXE;1
+                     13-SEP-2023 13:58:56.92
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.BIN]PHP_CGI.EXE;1
+                     13-SEP-2023 13:48:43.82
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.EXTENSIONS]PHP_CURL.EXE;1
+                     13-SEP-2023 13:48:07.82
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.EXTENSIONS]PHP_LDAP.EXE;1
+                     13-SEP-2023 13:48:12.26
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.EXTENSIONS]PHP_OPCACHE.EXE;1
+                     13-SEP-2023 13:49:40.94
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.EXTENSIONS]PHP_OPENVMS.EXE;1
+                     13-SEP-2023 13:48:14.79
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.EXTENSIONS]PHP_PDO_PGSQL.EXE;1
+                     13-SEP-2023 13:48:24.87
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.EXTENSIONS]PHP_PDO_SQLITE.EXE;1
+                     13-SEP-2023 13:48:30.04
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.EXTENSIONS]PHP_PGSQL.EXE;1
+                     13-SEP-2023 13:48:19.37
+SYS$SYSDEVICE:[VMS$COMMON.APACHE.PHP.EXTENSIONS]PHP_SQLITE3.EXE;1
+                     13-SEP-2023 13:48:32.73
+SYS$SYSDEVICE:[VMS$COMMON.php.bin]php.exe;1
+                      6-APR-2022 13:22:56.00
+SYS$SYSDEVICE:[VMS$COMMON.php.csws]php-cgi.exe;1
+                      6-APR-2022 13:23:25.00
+SYS$SYSDEVICE:[VMS$COMMON.php.lib]php$shr.exe;1
+                      6-APR-2022 13:21:57.00
+
+(LNM$PROCESS_TABLE)
+
+(LNM$JOB_8225B9C0)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+  "PHP_ROOT" = "DISK$X86SYS:[SYS0.SYSCOMMON.APACHE.PHP.]"
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+PHP_ROOT:[BIN]PHP.EXE;1
+                            767  13-SEP-2023 13:48:50.57
+PHP_ROOT:[BIN]PHPDBG.EXE;1
+                           1404  13-SEP-2023 13:49:22.97
+PHP_ROOT:[BIN]PHPSHR.EXE;1
+                          90924  13-SEP-2023 13:58:56.92
+PHP_ROOT:[BIN]PHP_CGI.EXE;1
+                            196  13-SEP-2023 13:48:43.82
+PHP_ROOT:[000000]BIN.DIR;1
+PHP_ROOT:[000000]EXTENSIONS.DIR;1
+PHP_ROOT:[000000]PHP.INI;9
+PHP_ROOT:[000000]php.ini-development;1
+PHP_ROOT:[000000]php.ini-production;1
+PHP_ROOT:[EXTENSIONS]PHP_CURL.EXE;1
+PHP_ROOT:[EXTENSIONS]PHP_LDAP.EXE;1
+PHP_ROOT:[EXTENSIONS]PHP_OPCACHE.EXE;1
+PHP_ROOT:[EXTENSIONS]PHP_OPENVMS.EXE;1
+PHP_ROOT:[EXTENSIONS]PHP_PDO_PGSQL.EXE;1
+PHP_ROOT:[EXTENSIONS]PHP_PDO_SQLITE.EXE;1
+PHP_ROOT:[EXTENSIONS]PHP_PGSQL.EXE;1
+PHP_ROOT:[EXTENSIONS]PHP_SQLITE3.EXE;1
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[LIB...]*.EXE;* as input
+-RMS-E-DNF, directory not found
+-SYSTEM-W-NOSUCHFILE, no such file
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[ETC]*.*;* as input
+-RMS-E-DNF, directory not found
+-SYSTEM-W-NOSUCHFILE, no such file
+--- php -v
+PHP 8.1.23 (cli) (built: Sep 13 2023 13:48:44) (NTS)
+Copyright (c) The PHP Group
+Zend Engine v4.1.23, Copyright (c) Zend Technologies
+--- php -m
+[PHP Modules]
+bcmath
+bz2
+calendar
+Core
+ctype
+curl
+date
+dba
+dom
+exif
+fileinfo
+filter
+ftp
+gd
+hash
+iconv
+json
+ldap
+libxml
+mbstring
+mysqli
+mysqlnd
+odbc
+openssl
+pcre
+PDO
+pdo_mysql
+Phar
+posix
+readline
+Reflection
+session
+SimpleXML
+soap
+sockets
+sodium
+SPL
+standard
+tidy
+tokenizer
+xml
+xmlreader
+xmlwriter
+xsl
+zip
+zlib
+
+[Zend Modules]
+
+--- php --ini
+Configuration File (php.ini) Path: /php_root/000000
+Loaded Configuration File:         /php_root/000000/php.ini
+Scan for additional .ini files in: (none)
+Additional .ini files parsed:      (none)
+--- php -i (selected)
+Server API => Command Line Interface
+Loaded Configuration File => /php_root/000000/php.ini
+extension_dir => /php_root/extensions => /php_root/extensions
+sys_temp_dir => no value => no value
+upload_tmp_dir => no value => no value
+MysqlI Support => enabled
+PDO drivers => mysql
+session.save_path => no value => no value
+--- php_cgi (FastCGI server mode is -b)
+PHP 8.1.23 (cgi-fcgi) (built: Sep 13 2023 13:48:41)
+Copyright (c) The PHP Group
+Zend Engine v4.1.23, Copyright (c) Zend Technologies
+  -b <address:port>|<port> Bind Path for external FASTCGI Server mode
+--- php-cgi candidates
+PHP_ROOT:[000000.BIN]PHP_CGI.EXE;1
+                            196  13-SEP-2023 13:48:43.82
+%DIRECT-E-OPENIN, error opening PHP_ROOT:[CSWS]*.*;* as input
+-RMS-E-DNF, directory not found
+-SYSTEM-W-NOSUCHFILE, no such file
+
+=== SSL3 kit
+
+(LNM$PROCESS_TABLE)
+
+(LNM$JOB_8225B9C0)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+  "SSL3$CERT" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$CERTS" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$COM" = "SSL3$ROOT:[COM]"
+  "SSL3$CONF" = "SSL3$ROOT:[DEMOCA.CONF]"
+  "SSL3$CRL" = "SSL3$ROOT:[DEMOCA.CRL]"
+  "SSL3$EXAMPLES" = "SYS$COMMON:[SYSHLP.EXAMPLES.SSL3]"
+  "SSL3$EXE" = "SSL3$ROOT:[X86_64_EXE]"
+  "SSL3$INCLUDE" = "SSL3$ROOT:[INCLUDE]"
+  "SSL3$KEY" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$KEYS" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$LIB" = "SSL3$ROOT:[LIB]"
+  "SSL3$MODULES" = "SSL3$ROOT:[MODULES]"
+  "SSL3$PRIVATE" = "SSL3$ROOT:[DEMOCA.PRIVATE]"
+  "SSL3$ROOT" = "SYS$SYSDEVICE:[VMS$COMMON.SSL3.]"
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+SYS$COMMON:[SYSLIB]SSL3$LIBCRYPTO_SHR.EXE;1
+SYS$COMMON:[SYSLIB]SSL3$LIBCRYPTO_SHR32.EXE;1
+SYS$COMMON:[SYSLIB]SSL3$LIBSSL_SHR.EXE;1
+SYS$COMMON:[SYSLIB]SSL3$LIBSSL_SHR32.EXE;1
+OpenSSL 3.0.21 9 Jun 2026 (Library: OpenSSL 3.0.21 9 Jun 2026)
+built on: Fri Jun 12 02:03:33 2026 UTC
+platform: vms-x86_64-p64
+options:  bn(64,64)
+compiler: CC/DECC  /DEFINE=(OPENSSL_PIC,OPENSSL_NO_ASM,OPENSSL_BUILDING_OPENSSL,_SOCKADDR_LEN,NDEBUG,OPENSSLDIR="""SSL3$ROOT:[000000]""",ENGINESDIR="""SSL3$ENGINES:""",MODULESDIR="""SSL3$MODULES:"""'extradefines')/INCLUDE=()/DEFINE=(OPENSSL_PIC,OPENSSL_NO_ASM,OPENSSL_BUILDING_OPENSSL,_SOCKADDR_LEN,NDEBUG,OPENSSLDIR="""SSL3$ROOT:[000000]""",ENGINESDIR="""SSL3$ENGINES:""",MODULESDIR="""SSL3$MODULES:"""'extradefines')
+OPENSSLDIR: "SSL3$ROOT:[000000]"
+ENGINESDIR: "SSL3$ENGINES:"
+MODULESDIR: "SSL3$MODULES:"
+Seeding source: os-specific
+CPUINFO: N/A
+SSL3 for OpenVMS V3.0(21) Jun 11 2026 (Library: SSL3 for OpenVMS V3.0(21) Jun 11 2026)
+
+=== zlib / pcre2 install trees in this and the sibling work directories
+%DIRECT-W-NOFILES, no files found
+
+=== MariaDB (our vms-mariadb server)
+OpenVMS E9.2-4  on node <node>    7-OCT-2026 23:18:20.10   Uptime  6 06:39:29
+  Pid    Process Name    State  Pri      I/O       CPU       Page flts  Pages
+0003B48A MARIADBD_3306   HIB      4    43967   0 00:00:44.97     10790  10199 M 
+tcp        0      0  *.59640                   *.3306                    TIME_WAIT
+tcp        0      0  *.59641                   *.3306                    TIME_WAIT
+tcp        0      0  *.59644                   *.3306                    TIME_WAIT
+tcp        0      0  *.59651                   *.3306                    TIME_WAIT
+tcp        0      0  *.59652                   *.3306                    TIME_WAIT
+tcp        0      0  *.59661                   *.3306                    TIME_WAIT
+tcp        0      0  *.3306                    *.*                       LISTEN
+
+=== decc$ logicals
+
+(LNM$PROCESS_TABLE)
+
+(LNM$JOB_8225B9C0)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+  "DECC$CRTLMAP" = "SYS$SHARE:DECC$SHR"
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+
+=== batch queues
+Generic batch queue SYS$BATCH
+
+Batch queue <node>_BATCH, idle, on <node>::
+
+  Entry  Jobname         Username             Status
+  -----  -------         --------             ------
+    467  apacheboot      IAIN                 Holding until  7-OCT-2026 23:20:09.65
+    460  ntpmonitor      IAIN                 Holding until  7-OCT-2026 23:20:13.55
+    462  sshlogs         IAIN                 Holding until  7-OCT-2026 23:23:27.12
+RECON-DONE

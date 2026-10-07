@@ -39,7 +39,7 @@ static void trial(const char *name, const char *rfm, const char *rat, const char
   make_text(want);
   remove(name);
   if (mrs)
-    f = fopen(name, "w", rfm, rat, mrs);
+    f = fopen(name, "w", rfm, mrs);
   else if (rat)
     f = fopen(name, "w", rfm, rat);
   else
