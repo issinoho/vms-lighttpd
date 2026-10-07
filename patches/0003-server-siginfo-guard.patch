@@ -1,0 +1,29 @@
+Subject: server: use last_sig*_info only where they are declared
+
+last_sigterm_info and last_sighup_info are declared under
+#if defined(HAVE_SIGACTION) && defined(SA_SIGINFO), but the two log
+messages that print their si_uid/si_pid test only HAVE_SIGACTION.  OpenVMS
+has sigaction() but no SA_SIGINFO, so server.c did not compile.  Use the
+same condition at both use sites (not VMS-specific: any platform with
+sigaction() and no SA_SIGINFO hits this).
+
+--- a/src/server.c
++++ b/src/server.c
+@@ -2122,7 +2122,7 @@
+ 
+ 			plugins_call_handle_sighup(srv);
+ 			fdlog_files_cycle(srv->errh); /* reopen log files, not pipes */
+-#ifdef HAVE_SIGACTION
++#if defined(HAVE_SIGACTION) && defined(SA_SIGINFO)
+ 				log_info(srv->errh, __FILE__, __LINE__,
+ 				  "logfiles cycled UID = %d PID = %d",
+ 				  (int)last_sighup_info.si_uid,
+@@ -2387,7 +2387,7 @@
+                 log_notice(srv->errh, __FILE__, __LINE__,
+                   "server stopped after idle timeout");
+             } else if (!oneshot_fd) {
+-              #ifdef HAVE_SIGACTION
++              #if defined(HAVE_SIGACTION) && defined(SA_SIGINFO)
+                 log_notice(srv->errh, __FILE__, __LINE__,
+                   "server stopped by UID = %d PID = %d",
+                   (int)last_sigterm_info.si_uid,

@@ -47,8 +47,21 @@ plus phpBB 3.3.x on VSI PHP 8.1 (FastCGI) with our vms-mariadb server as the dat
 tools/prepare.sh                     # fetch+verify, extract, patches, overlay -> staging/
 tools/recon.sh <node>                # Phase 0 environment -> docs/env-<node>.txt (read-only)
 tools/probe.sh <node>                # Phase 0 probes (VSI C) -> docs/probes-<node>.txt
+tools/build.sh <node> [ALL|CLEAN|LINK] [KEEP_GOING]  # push + @[.VMSPORT]BUILD -> [.VMS_<arch>]LIGHTTPD.EXE
 tools/vms.sh <node> dcl '<cmd>' ...  # run DCL; also run/batch/put/get
 ```
+
+## Pitfalls found in this port
+
+- **Don't define `_XOPEN_SOURCE`/`_POSIX_C_SOURCE`** (or `_XOPEN_SOURCE_EXTENDED`) for the
+  whole build: the CRTL headers then hide the BSD types and `struct timespec` (PORTING_LOG
+  #1-2). Upstream files that define them are patched (0002).
+- **BUILD.COM does not track headers or qualifiers**: `tools/build.sh <node> CLEAN` after
+  changing either.
+- The dependency trees (`ZLIB-1_3_2`, `PCRE2-10_49`) are built by the sibling repos into this
+  work directory; their `tools/nodes.conf` is a copy of ours.
+- Background jobs in WSL die with the `wsl.exe` that started them: start long builds with
+  `setsid nohup ... &` and wait on the PID, keeping logs under `out/`, not `/tmp`.
 
 ## Commits
 

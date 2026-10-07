@@ -1,0 +1,20 @@
+Subject: mod_fastcgi: call log_err_multiline() rather than the compat alias
+
+log.h keeps log_error_multiline as an object-like alias for the
+variadic macro log_err_multiline ("backwards compat for historic
+log_error_multiline()").  VSI C miscounts the arguments when the alias
+is followed by an argument list containing BUF_PTR_LEN() (which expands
+to two arguments): %CC-W-TOOMANYACTLS, then a syntax error.  Calling
+log_err_multiline() directly, as the rest of the tree does, avoids it.
+
+--- a/src/mod_fastcgi.c
++++ b/src/mod_fastcgi.c
+@@ -474,7 +474,7 @@
+ 				buffer * const tb = r->tmp_buf;
+ 				buffer_clear(tb);
+ 				fastcgi_get_packet_body(tb, hctx, &packet);
+-				log_error_multiline(r->conf.errh, __FILE__, __LINE__,
++				log_err_multiline(r->conf.errh, __FILE__, __LINE__,
+ 				  BUF_PTR_LEN(tb), "FastCGI-stderr:");
+ 			}
+ 			break;

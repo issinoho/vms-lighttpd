@@ -1,0 +1,19 @@
+Subject: server: use the C RTL's getopt() on VMS
+
+OpenVMS has getopt() in the C RTL (declared in <unistd.h>) but no
+<getopt.h>, so server.c compiled its own fallback getopt()/optarg/optind.
+The compiler maps those CRTL names to DECC$GETOPT etc., and the link then
+reports them as defined twice (%ILINK-W-MULDEF against DECC$SHR).  Use the
+CRTL's on VMS.
+
+--- a/src/server.c
++++ b/src/server.c
+@@ -50,6 +50,8 @@
+ 
+ #ifdef HAVE_GETOPT_H
+ # include <getopt.h>
++#elif defined(__VMS)
++# include <unistd.h>     /* getopt() is in the C RTL; there is no getopt.h */
+ #else
+ /* basic (very limited) getopt() implementation */
+ extern char *optarg;

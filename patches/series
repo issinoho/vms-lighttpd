@@ -1,0 +1,6 @@
+0001-server-max-fds-from-fillm-vms.patch
+0002-no-xopen-source-on-vms.patch
+0003-server-siginfo-guard.patch
+0004-server-sentinel-not-static-vms.patch
+0005-mod-fastcgi-log-err-multiline.patch
+0006-server-crtl-getopt-vms.patch

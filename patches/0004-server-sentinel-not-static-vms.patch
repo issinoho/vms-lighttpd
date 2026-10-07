@@ -1,0 +1,19 @@
+Subject: server: no static address-to-integer initializer for VSI C
+
+server_main_loop() initialises a static pointer with
+(connection *)(uintptr_t)&log_con_jqueue.  VSI C rejects converting an
+address through an integer in a static initializer (%CC-E-BADSTATICCVT);
+upstream already drops 'static' here for MSVC.  Do the same on VMS: the
+value is a constant address either way.
+
+--- a/src/server.c
++++ b/src/server.c
+@@ -2263,7 +2263,7 @@
+ 			server_load_check(srv);
+ 		}
+ 
+-	  #ifndef _MSC_VER
++	  #if !defined(_MSC_VER) && !defined(__VMS)
+ 		static
+ 	  #endif
+ 		connection * const sentinel =

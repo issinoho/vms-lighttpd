@@ -1,11 +1,12 @@
 # vms-lighttpd
 
-A port of [lighttpd](https://www.lighttpd.net/) 1.4 to OpenVMS (x86-64; IA64 planned),
+A port of [lighttpd](https://www.lighttpd.net/) 1.4 to OpenVMS (x86-64 and IA64),
 built natively with VSI C against VSI's SSL3 (OpenSSL 3.0). It is meant as a light, modern
 alternative to VSI's Apache for HTTPS and PHP sites. The acceptance test is phpBB 3.3.x on
 VSI PHP over FastCGI.
 
-**Status:** Phase 0 (reconnaissance). Nothing is built yet.
+**Status:** Phase 1 done: `LIGHTTPD.EXE` builds and links on x86-64 and IA64 and checks a
+configuration (`-tt`). Serving (Phase 2) is next.
 
 This repository stores only the VMS delta over the signed upstream release, the same way as
 its siblings ([vms-curl](https://github.com/issinoho/vms-curl),

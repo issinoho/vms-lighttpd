@@ -111,3 +111,28 @@ BYTLM 127040) concurrent connections; FILLM (1000 / 150) is the fd limit
 BYTLM and FILLM. IA64's system CHANNELCNT is 512, which caps one process at about 250
 connections unless SYSGEN is changed. lighttpd's `server.max-connections` must be set below
 the quota-derived limit; the startup procedure computes it.
+
+## D8. Files that are not stream-LF: buffered read, chunked, with a warning
+
+**Status:** approved by the user (2026-10-07); to implement in Phase 2 with the static-file
+tests.
+
+`r_files`: only stream-LF and UDF files have `st_size` equal to the bytes `read()` returns.
+For fixed, variable and stream-CRLF files lighttpd must not take Content-Length from
+`st_size` or `mmap()` the file: read them through the CRTL (which converts records),
+send the response chunked, and log a warning naming the file once. Rejected: refusing them
+(500): friendlier to serve, and the warning tells the admin to `CONVERT` the file.
+
+## D9. Phase 1 build notes
+
+**Status:** record (2026-10-08).
+
+- Compile flags: `/NAMES=(AS_IS,SHORTENED)/FLOAT=IEEE`, `_LARGEFILE`, `_USE_STD_STAT`,
+  `_POSIX_EXIT`, `_SOCKADDR_LEN`; no `_XOPEN_SOURCE*` (PORTING_LOG #1-2).
+- Include directories in UNIX form so relative includes resolve (PORTING_LOG #3).
+- The process-creation path (`fdevent_fork_execve` via `vfork`+`execve`) is **not** written
+  yet: nothing built needs it (no mod_cgi, PHP is an external FastCGI pool, D4). Without
+  `HAVE_FORK` it returns -1, so `bin-path` and piped logs fail cleanly.
+- Not yet looked at: `server.upload-dirs` defaults to `/var/tmp` (absent on VMS);
+  `__FILE__` in log lines is a full VMS file spec; `-V` loses its feature list when run
+  with `/OUTPUT=` (write() then printf()).

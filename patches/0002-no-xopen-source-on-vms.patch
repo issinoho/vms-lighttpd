@@ -1,0 +1,41 @@
+Subject: Don't define _XOPEN_SOURCE on VMS: it hides BSD types and timespec
+
+On OpenVMS, defining _XOPEN_SOURCE (or _POSIX_C_SOURCE) makes the C RTL
+headers strictly standard: <sys/types.h> then drops the BSD types
+(u_char, u_short) that <net/if_arp.h> and the socket headers use, and
+<time.h> hides struct timespec and clock_gettime() unless
+_XOPEN_SOURCE_EXTENDED is also set, which in turn implies _POSIX_C_SOURCE.
+The CRTL's default (no feature macros) already declares everything these
+files want (vsnprintf, clock_gettime, the socket API), so don't define
+_XOPEN_SOURCE on VMS.  mod_dirlisting's fstatat()/fdopendir() don't exist
+on VMS in any mode; that is handled separately.
+
+--- a/src/ck.c
++++ b/src/ck.c
+@@ -10,7 +10,7 @@
+ #ifndef __STDC_WANT_LIB_EXT1__
+ #define __STDC_WANT_LIB_EXT1__ 1
+ #endif
+-#ifndef _XOPEN_SOURCE
++#if !defined(_XOPEN_SOURCE) && !defined(__VMS)
+ #define _XOPEN_SOURCE 700
+ #endif
+ #ifndef _NETBSD_SOURCE
+--- a/src/log.c
++++ b/src/log.c
+@@ -1,5 +1,5 @@
+ /* _XOPEN_SOURCE >= 500 for vsnprintf() */
+-#ifndef _XOPEN_SOURCE
++#if !defined(_XOPEN_SOURCE) && !defined(__VMS)
+ #define _XOPEN_SOURCE 700
+ #endif
+ 
+--- a/src/mod_dirlisting.c
++++ b/src/mod_dirlisting.c
+@@ -1,5 +1,5 @@
+ /* fstatat() fdopendir() */
+-#if !defined(_XOPEN_SOURCE) || _XOPEN_SOURCE-0 < 700
++#if (!defined(_XOPEN_SOURCE) || _XOPEN_SOURCE-0 < 700) && !defined(__VMS)
+ #undef  _XOPEN_SOURCE
+ #define _XOPEN_SOURCE 700
+ /* NetBSD dirent.h improperly hides fdopendir() (POSIX.1-2008) declaration

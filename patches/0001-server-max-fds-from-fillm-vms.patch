@@ -1,0 +1,25 @@
+Subject: server: take the fd limit from sysconf(_SC_OPEN_MAX) on VMS
+
+The OpenVMS C RTL has no getrlimit()/setrlimit(), so HAVE_GETRLIMIT is
+undefined and server.max-fds stayed 0 (only _WIN32 had a default).  The
+per-process open file limit on VMS is the FILLM quota, which
+sysconf(_SC_OPEN_MAX) reports (probes/r_net2.c: 1000 and 150 on our nodes).
+Use it as the default and as the ceiling for a configured server.max-fds,
+since the process cannot raise it.
+
+--- a/src/server.c
++++ b/src/server.c
+@@ -1784,6 +1784,13 @@
+ 		if (0 == srv->srvconf.max_fds)
+ 			srv->srvconf.max_fds = 4096;
+ 	  #endif
++	  #ifdef __VMS
++		/* no getrlimit(); the open file limit is the FILLM quota */
++		long fillm = sysconf(_SC_OPEN_MAX);
++		if (fillm > 0 && (0 == srv->srvconf.max_fds
++		                  || srv->srvconf.max_fds > (unsigned int)fillm))
++			srv->srvconf.max_fds = (unsigned int)fillm;
++	  #endif
+ #endif
+ 	}
+ 
