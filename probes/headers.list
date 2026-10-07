@@ -1,0 +1,43 @@
+# Headers lighttpd 1.4.85 checks for (CMakeLists.txt / src/CMakeLists.txt check_include_files),
+# minus those for optional libraries we do not build (dbi, ldap, sasl, pam, gnutls, nss, ...).
+crypt.h
+dlfcn.h
+getopt.h
+inttypes.h
+malloc.h
+pcre2.h
+poll.h
+port.h
+pwd.h
+signal.h
+spawn.h
+stdint.h
+stdlib.h
+strings.h
+sys/devpoll.h
+sys/epoll.h
+sys/event.h
+sys/filio.h
+sys/inotify.h
+sys/loadavg.h
+sys/mman.h
+sys/poll.h
+sys/random.h
+sys/resource.h
+sys/select.h
+sys/sendfile.h
+sys/time.h
+sys/types.h
+sys/uio.h
+sys/un.h
+sys/wait.h
+syslog.h
+unistd.h
+zlib.h
+# used unconditionally by the sources
+netinet/tcp.h
+sys/ioctl.h
+sys/stat.h
+grp.h
+time.h
+stdatomic.h
