@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # kit.sh <node> - build on <node>, make the PCSI kit there, fetch it to out/kits/.
-# Builds first (via build.sh) so the kit always matches the pushed tree.
+# Builds first (via build.sh), from clean, so the kit always matches the pushed
+# tree: BUILD.COM does not track headers, and the version is in one.
 set -euo pipefail
 
 top=$(cd "$(dirname "$0")/.." && pwd)
@@ -10,7 +11,7 @@ remote=$(echo "$UPSTREAM_NAME-$UPSTREAM_VERSION" | tr . _)
 REMOTE=$(echo "$remote" | tr a-z A-Z)
 read -r _ ARCH _ _ _ WORKDIR _ < <(awk -v n="$node" '$1==n' "$top/tools/nodes.conf")
 
-"$top/tools/build.sh" "$node" > "$top/out/build-$node.log" 2>&1 ||
+{ "$top/tools/build.sh" "$node" CLEAN && "$top/tools/build.sh" "$node" ALL; } > "$top/out/build-$node.log" 2>&1 ||
     { tail -20 "$top/out/build-$node.log"; echo "kit: build failed" >&2; exit 1; }
 
 job=$top/cache/kit-$node.com
