@@ -28,6 +28,12 @@ worker() {
     [ "${SOAK_PHP:-0}" = 1 ] && urls=("http://$HOST:18080/info.php" "http://$HOST:18080/env.php/a/b?x=1"
                 "http://$HOST:18080/pid.php" "http://$HOST:18080/session.php" "post"
                 "https://$HOST:18443/info.php" "http://$HOST:18080/big.php?n=32768" "http://$HOST:18080/plain.txt")
+    # SOAK_PHPBB=1: Phase 4 server (CONF=[.T4]LIGHTTPD.CONF), guest pages of the
+    # test board: index, forum, topic, search, login form, FAQ, member list
+    [ "${SOAK_PHPBB:-0}" = 1 ] && urls=("http://$HOST:18080/" "http://$HOST:18080/viewforum.php?f=2"
+                "http://$HOST:18080/viewtopic.php?t=1" "http://$HOST:18080/search.php?keywords=welcome"
+                "http://$HOST:18080/ucp.php?mode=login" "http://$HOST:18080/app.php/help/faq"
+                "http://$HOST:18080/memberlist.php" "https://$HOST:18443/viewtopic.php?t=1")
     while [ "$(date +%s)" -lt "$end" ]; do
         u=${urls[$((RANDOM % ${#urls[@]}))]}
         if [ "$u" = post ]; then
