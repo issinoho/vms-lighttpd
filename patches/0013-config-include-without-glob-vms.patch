@@ -1,0 +1,27 @@
+Subject: configfile: open plain include files without glob() on VMS
+
+lighttpd expands every include path with glob(), so that patterns such as
+include "conf.d/*.conf" work.  The OpenVMS C RTL's glob() does not match
+UNIX-form paths like /DISK$USER/USER/SITE/phpbb.conf (GLOB_NOMATCH), so any
+include failed with "include file not found" (Phase 4).  On VMS, when the
+name has no glob metacharacters, parse the file directly; patterns still go
+through glob().
+
+--- a/src/configfile.c
++++ b/src/configfile.c
+@@ -2432,6 +2432,15 @@
+ 		                                fn, fnlen);
+ 	}
+ 
++  #ifdef __VMS
++	/* the C RTL's glob() does not match UNIX-form paths: open plain
++	 * file names directly, use glob() only for patterns */
++	if (filename->ptr[strcspn(filename->ptr, "*?[]{}")] == '\0') {
++		ret = config_parse_file_stream(srv, context, filename->ptr);
++		buffer_free(filename);
++		return ret;
++	}
++  #endif
+ 	switch (glob(filename->ptr, flags, NULL, &gl)) {
+ 	case 0:
+ 		for (size_t i = 0; i < gl.gl_pathc; ++i) {

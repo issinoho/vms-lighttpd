@@ -39,7 +39,7 @@ setup)
 start)
     out=$(vms dcl "set default $tree" \
           "if f\$search(\"[.T2.LOGS]*.*\") .nes. \"\" then delete/nolog [.T2.LOGS]*.*;*" \
-          "submit/noprint/log_file=$tree"'P2SERVER.LOG'"/name=LTTEST/parameters=(\"$tree\") [.VMSPORT.TESTS]P2SERVER.COM")
+          "submit/noprint/log_file=$tree"'P2SERVER.LOG'"/name=LTTEST/parameters=(\"$tree\",\"${CONF:-[.T2]LIGHTTPD.CONF}\") [.VMSPORT.TESTS]P2SERVER.COM")
     echo "$out"
     entry=$(echo "$out" | grep -oE 'entry [0-9]+' | awk '{print $2}')
     [ -n "$entry" ] || { echo "serve: no entry number" >&2; exit 1; }
@@ -63,6 +63,12 @@ phpsetup)
     stage=$top/staging/$UPSTREAM_NAME-$UPSTREAM_VERSION
     vms put "$stage"/vmsport/tests/php/*.php -- "$remote/T2/HTDOCS"
     vms dcl "set default $tree" "@[.VMSPORT.TESTS]P3SETUP.COM ${BIND:-0.0.0.0} ${PHP_ROOT_NAME:-PHP_ROOT}" | grep -E 'P3SETUP-DONE|fastcgi|port" =>' || true
+    ;;
+phpbbsetup)
+    # Phase 4: phpBB (uploaded to <workdir>.PHPBB] and installed) behind lighttpd;
+    # phpBB will not run while its install directory exists
+    "$top/tools/push.sh" "$node" >/dev/null
+    vms dcl "set default $tree"         'if f$search("[-.PHPBB]INSTALL.DIR") .nes. "" then rename [-.PHPBB]INSTALL.DIR [-.PHPBB]INSTALL_DONE.DIR'         "@[.VMSPORT.TESTS]P4SETUP.COM ${BIND:-0.0.0.0}" | grep -E 'P4SETUP|%' || true
     ;;
 poolstart|poolstop|poolstatus)
     vms dcl "set default $tree" "@[.VMSPORT.PHP]PHP_POOL.COM ${op#pool} ${POOL_COUNT:-4} 19000 [.T3POOL] ${PHP_ROOT_NAME:-PHP_ROOT}" |

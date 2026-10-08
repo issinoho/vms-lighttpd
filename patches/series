@@ -10,3 +10,4 @@
 0010-tmpdir-default-sys-scratch-vms.patch
 0011-path-info-enoent-vms.patch
 0012-tempfile-fsync-vms.patch
+0013-config-include-without-glob-vms.patch
