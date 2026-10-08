@@ -1,0 +1,31 @@
+Subject: log: print the source file name, not VSI C's full __FILE__ spec
+
+VSI C expands __FILE__ to the full VMS file specification of the source,
+e.g. DISK$USER:[USER.LIGHTTPD-1_4_85.SRC]configfile.c;1, so every log line
+began "(DISK$USER:[USER.LIGHTTPD-1_4_85.SRC]configfile.c;1.2760)", which
+also put the build directory into logs.  On VMS, log just the file name
+(after the last ']', without the ;version), as other platforms do.
+
+--- a/src/log.c
++++ b/src/log.c
+@@ -175,9 +175,19 @@
+                    const unsigned int line)
+ {
+     char lstr[LI_ITOSTRING_LENGTH];
++  #ifdef __VMS
++    /* __FILE__ is a VMS file spec: DEV:[DIR]name.c;1 -> name.c */
++    const char *fn = strrchr(filename, ']');
++    fn = fn ? fn + 1 : filename;
++    const char * const ver = strchr(fn, ';');
++    const size_t fnlen = ver ? (size_t)(ver - fn) : strlen(fn);
++  #else
++    const char * const fn = filename;
++    const size_t fnlen = strlen(filename);
++  #endif
+     struct const_iovec iov[] = {
+       { CONST_STR_LEN("(") }
+-     ,{ filename, strlen(filename) }
++     ,{ fn, fnlen }
+      ,{ CONST_STR_LEN(".") }
+      ,{ lstr, li_itostrn(lstr, sizeof(lstr), line) }
+      ,{ CONST_STR_LEN(") ") }

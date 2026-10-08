@@ -38,8 +38,11 @@ $ delete/nolog [.T]INDEX.TMP;*
 $!
 $! The UNIX form of [.T], e.g. /DISK$USER/USERNAME/VMS_LIGHTTPD/.../T
 $ dev = f$parse("[.T]",,,"DEVICE","NO_CONCEAL") - ":"
-$ dir = f$parse("[.T]",,,"DIRECTORY","NO_CONCEAL") - "[" - "]" - "<" - ">"
-$ dir = dir - "000000." - ".]["
+$! rooted directories come back as [ROOT.][DIR...]: join first, then drop [ ]
+$ dir = f$parse("[.T]",,,"DIRECTORY","NO_CONCEAL")
+$ i = f$locate(".][", dir)
+$ if i .lt. f$length(dir) then dir = f$extract(0, i, dir) + "." + f$extract(i + 3, 999, dir)
+$ dir = f$extract(1, f$length(dir) - 2, dir) - "000000."
 $ udir = "/" + dev + "/" + dir
 $loop:
 $ i = f$locate(".", udir)

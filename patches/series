@@ -4,3 +4,7 @@
 0004-server-sentinel-not-static-vms.patch
 0005-mod-fastcgi-log-err-multiline.patch
 0006-server-crtl-getopt-vms.patch
+0007-log-files-fsync-vms.patch
+0008-send-file-vms-record-formats.patch
+0009-log-file-name-not-vms-spec.patch
+0010-tmpdir-default-sys-scratch-vms.patch

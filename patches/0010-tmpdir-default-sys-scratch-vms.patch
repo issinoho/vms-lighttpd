@@ -1,0 +1,22 @@
+Subject: chunk: default temporary directory on VMS is SYS$SCRATCH
+
+Request bodies over the in-memory limit (uploads, large POSTs to
+FastCGI) go to temporary files in server.upload-dirs, which defaults to
+$TMPDIR, else /var/tmp.  OpenVMS has no /var/tmp, so -tt warned
+"server.upload-dirs /var/tmp: no such file or directory" and uploads
+would fail unless upload-dirs was set.  getenv("TMPDIR") on VMS also
+finds a logical name, so DEFINE TMPDIR still works; without it use
+SYS$SCRATCH, every process's scratch directory.
+
+--- a/src/chunk.c
++++ b/src/chunk.c
+@@ -759,6 +759,9 @@
+     #ifdef _WIN32
+     if (NULL == env_tmpdir) env_tmpdir = getenv("TEMP");
+     #endif
++  #ifdef __VMS
++    if (NULL == env_tmpdir) env_tmpdir = "/sys$scratch";
++  #endif
+     if (NULL == env_tmpdir) env_tmpdir = "/var/tmp";
+ }
+ 

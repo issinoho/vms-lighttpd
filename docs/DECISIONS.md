@@ -136,3 +136,22 @@ send the response chunked, and log a warning naming the file once. Rejected: ref
 - Not yet looked at: `server.upload-dirs` defaults to `/var/tmp` (absent on VMS);
   `__FILE__` in log lines is a full VMS file spec; `-V` loses its feature list when run
   with `/OUTPUT=` (write() then printf()).
+
+D8 as built (2026-10-08, patch 0008): non-Stream_LF/UDF files up to 32 MB are read through
+the CRTL and sent from memory **with their exact Content-Length** (Range/ETag still work),
+rather than chunked; larger ones are refused with 500 and a log entry. One warning per file.
+
+## D10. TCP throughput on the nodes is ~50-130 KB/s per connection, for any program
+
+**Status:** finding (2026-10-08), reported to the user; outside the port.
+
+Phase 2 downloads crawled. Measured with `probes/r_blast.c` (sends 10 MB from memory, blocking
+or poll()-driven, optional SO_SNDBUF): x86 → WSL 55-86 KB/s, IA64 → WSL 70-80 KB/s, x86 →
+Windows directly 71 KB/s, x86 loopback (VMSCURL client) 90 KB/s, OpenSSH sftp download from
+x86 46 KB/s; a 256 KB or 1 MB SO_SNDBUF changes nothing. lighttpd matches these (2 MB in
+16-50 s). Files read at ~35 MB/s and `poll()`/`TCP_NODELAY` behave (`r_pollout`,
+`r_nodelay`, `r_fileread`), so the limit is the TCP/IP stack configuration on these systems
+(`sysconfig -q inet`: tcp_sendspace/recvspace 61440, delayed ACK on, tcp_cwnd_segments 2,
+mssdflt 536, SACK/timestamps off) or the hosts' network setup; tuning it is a system change
+for the user. Consequences: tests move 2 MB, not 100 MB; Phase 4 benchmarks must compare
+servers on the same node and network, and will be dominated by this limit for large pages.

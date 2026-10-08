@@ -1,0 +1,112 @@
+Subject: http_response_send_file: send RMS record files by their converted bytes on VMS
+
+OpenVMS files have an RMS record format.  For Stream_LF and undefined
+(UDF) files st_size is the number of bytes read() returns, so lighttpd's
+Content-Length and its pread()/mmap() of the file are right.  For the
+other formats (fixed, variable, VFC, stream-CR/CRLF: what EDT, DCL CREATE,
+COPY from older systems, ... make) st_size counts the bytes on disk, read()
+returns the records converted to bytes with newlines, and pread()/mmap()
+see the raw blocks (probes/r_files.c).  Served as is, the response is
+garbled or cut short, or never finishes (Content-Length 42 for 33 bytes).
+
+On VMS, check the record format of a static file before sending it.  If it
+is not Stream_LF/UDF, read it through the C RTL (which converts records)
+and send those bytes from memory with their real length; Range, ETag and
+Last-Modified then work as usual.  Log a warning naming the file (once per
+file in a row) recommending CONVERT to Stream_LF.  Files over 32 MB in a
+record format are refused (500) with a log entry rather than buffered.
+docs/DECISIONS.md D8.
+
+--- a/src/http-header-glue.c
++++ b/src/http-header-glue.c
+@@ -27,6 +27,78 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <errno.h>
++
++#ifdef __VMS
++#include <fcntl.h>
++#include <unistd.h>
++#include <fabdef.h>     /* FAB$C_STMLF, FAB$C_UDF */
++
++#define VMS_RECORD_FILE_MAX (32L * 1024 * 1024)
++
++/* RMS record files: st_size is not the number of bytes read() returns.
++ * Returns 0 if the file is Stream_LF/UDF (send it the normal way), 1 if
++ * the converted bytes were queued with Content-Length, -1 on error (status
++ * set).  docs/DECISIONS.md D8 */
++static int
++http_response_send_vms_record_file (request_st * const r, const buffer * const path, const stat_cache_entry * const sce)
++{
++    static buffer warned; /* last file warned about */
++    const int rfm = sce->st.st_fab_rfm;
++    if (rfm == FAB$C_STMLF || rfm == FAB$C_UDF)
++        return 0;
++
++    if (sce->st.st_size > VMS_RECORD_FILE_MAX) {
++        log_error(r->conf.errh, __FILE__, __LINE__,
++          "%s: RMS record format %d (not Stream_LF) and over %ld bytes; "
++          "CONVERT it to Stream_LF to serve it", path->ptr, rfm,
++          (long)VMS_RECORD_FILE_MAX);
++        r->http_status = 500;
++        return -1;
++    }
++    if (!buffer_is_equal(&warned, path)) {
++        log_error(r->conf.errh, __FILE__, __LINE__,
++          "%s: RMS record format %d (not Stream_LF); sending the converted "
++          "records from memory - CONVERT it to Stream_LF to serve it "
++          "directly", path->ptr, rfm);
++        buffer_copy_buffer(&warned, path);
++    }
++
++    const int fd = open(path->ptr, O_RDONLY);
++    if (fd < 0) {
++        log_perror(r->conf.errh, __FILE__, __LINE__, "open %s", path->ptr);
++        r->http_status = 403;
++        return -1;
++    }
++    buffer * const b = chunk_buffer_acquire();
++    char tmp[16384];
++    ssize_t n;
++    while ((n = read(fd, tmp, sizeof(tmp))) > 0
++           && buffer_clen(b) <= VMS_RECORD_FILE_MAX)
++        buffer_append_string_len(b, tmp, (size_t)n);
++    close(fd);
++    if (n < 0 || buffer_clen(b) > VMS_RECORD_FILE_MAX) {
++        if (n < 0)
++            log_perror(r->conf.errh, __FILE__, __LINE__, "read %s", path->ptr);
++        chunk_buffer_release(b);
++        r->http_status = 500;
++        return -1;
++    }
++    const uint32_t len = buffer_clen(b);
++    if (0 != len && 0 != http_chunk_append_buffer(r, b)) {
++        chunk_buffer_release(b);
++        r->http_status = 500;
++        return -1;
++    }
++    chunk_buffer_release(b);
++    r->http_status = 200;
++    r->resp_body_finished = 1;
++    buffer_append_int(
++      http_header_response_set_ptr(r, HTTP_HEADER_CONTENT_LENGTH,
++                                   CONST_STR_LEN("Content-Length")),
++      (intmax_t)len);
++    return 1;
++}
++#endif
+ 
+ #include "sys-socket.h"
+ #include "sys-unistd.h" /* <unistd.h> */
+@@ -482,6 +554,11 @@
+ 	/* we add it here for all requests
+ 	 * the HEAD request will drop it afterwards again
+ 	 */
++
++  #ifdef __VMS
++	if (0 != http_response_send_vms_record_file(r, path, sce))
++		return; /* sent from memory, or error status set */
++  #endif
+ 
+ 	if (0 == sce->st.st_size || 0 == http_chunk_append_file_ref(r, sce)) {
+ 		r->http_status = 200;

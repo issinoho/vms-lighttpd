@@ -1,0 +1,48 @@
+Subject: logs: fsync() log files after writing on VMS so readers see the data
+
+On OpenVMS, data written to a file with write() is not visible to other
+readers (TYPE, SEARCH, sftp, a log shipper) until the file's end-of-file
+mark is updated, which happens at close or when the file is flushed.
+lighttpd keeps its error and access logs open for its whole life, so they
+looked empty while the server ran (Phase 2: an empty error.log after
+failed requests).  fsync() flushes the file and updates the EOF.  Call it
+after each write to a log *file* (not pipes, stderr or syslog).  The error
+log is written rarely; the access log is written in 8 KB batches or by the
+periodic flush, so the cost is small.
+
+--- a/src/log.c
++++ b/src/log.c
+@@ -289,6 +289,9 @@
+     if (errh->mode != FDLOG_SYSLOG) { /* FDLOG_FD FDLOG_FILE FDLOG_PIPE */
+         buffer_append_char(b, '\n');
+         write_all(errh->fd, BUF_PTR_LEN(b));
++      #ifdef __VMS
++        if (errh->mode == FDLOG_FILE) fsync(errh->fd); /* make it visible */
++      #endif
+     }
+     else {
+       #ifdef HAVE_SYSLOG_H
+--- a/src/fdlog_maint.c
++++ b/src/fdlog_maint.c
+@@ -250,6 +250,9 @@
+         buffer * const b = &fdlog->b;
+         if (!buffer_is_blank(b)) {
+             const ssize_t wr = write_all(fdlog->fd, BUF_PTR_LEN(b));
++          #ifdef __VMS
++            if (fdlog->mode == FDLOG_FILE) fsync(fdlog->fd); /* make it visible */
++          #endif
+             buffer_clear(b); /*(clear buffer, even on error)*/
+             if (-1 == wr)
+                 log_perror(errh, __FILE__, __LINE__,
+--- a/src/mod_accesslog.c
++++ b/src/mod_accesslog.c
+@@ -1053,6 +1053,9 @@
+ 
+     if (flush || fdlog->mode == FDLOG_PIPE || buffer_clen(b) >= 8192) {
+         const ssize_t wr = write_all(fdlog->fd, BUF_PTR_LEN(b));
++      #ifdef __VMS
++        if (fdlog->mode == FDLOG_FILE) fsync(fdlog->fd); /* make it visible */
++      #endif
+         buffer_clear(b); /*(clear buffer, even on error)*/
+         if (-1 == wr)
+             log_perror(r->conf.errh, __FILE__, __LINE__,
