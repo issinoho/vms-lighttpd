@@ -17,8 +17,11 @@ tools/serve.sh x86 start`.  Checklist: `tools/test_phpbb.py x86`.
 | board index, denied paths (config.php, cache, store, files, includes, vendor) | pass |
 | admin login, new topic, reply with a 40 KB attachment, download (MD5), search, logout | pass |
 | `test_phpbb.py` total | 14/14 |
-| ACP | manual (the script's re-authentication is accepted but it doesn't reach /adm/) |
+| ACP | pass (by the user in a browser, 2026-10-08; the script's re-authentication is accepted but it doesn't reach /adm/) |
 | registration | manual (CAPTCHA) |
 
 First request per PHP process takes 10-18 s (opcache compiling phpBB); after that pages
 take 0.7-4 s over this network.
+
+The installer enabled the bundled `phpbb/viglink` extension despite `extensions: []`; the user
+disabled it in the ACP (2026-10-08).
