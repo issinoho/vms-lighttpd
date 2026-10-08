@@ -98,10 +98,28 @@ $ endif
 $ if f$edit(vmslighttpd_php, "UPCASE") .eqs. "YES" then -
      @VMSLIGHTTPD$ROOT:[COM]PHP_POOL STATUS 'vmslighttpd_php_count' 'vmslighttpd_php_base' -
         'phpdir' 'vmslighttpd_php_root'
+$! the last 5 lines of the error log: read it here, as TYPE/TAIL does not
+$! support Stream_LF files (%TYPE-W-OPENIN, RMS-F-ORG)
 $ if f$search(logs + "error.log") .nes. ""
 $ then
 $   say "--- last lines of ", logs, "error.log"
-$   type/tail=5 'logs'error.log
+$   open/read/share=write elog 'logs'error.log
+$   n = 0
+$tail_read:
+$   read/end=tail_show elog line
+$   n = n + 1
+$   tail_'f$string(n - (n / 5) * 5)' = line
+$   goto tail_read
+$tail_show:
+$   close elog
+$   k = n - 5
+$   if k .lt. 0 then k = 0
+$tail_loop:
+$   if k .ge. n then goto tail_done
+$   say tail_'f$string(k - (k / 5) * 5)'
+$   k = k + 1
+$   goto tail_loop
+$tail_done:
 $ endif
 $ exit 1
 $!
