@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/images/banner.svg" alt="lighttpd for OpenVMS: a DECterm window starting the lighttpd service and showing its status, with a globe mark" width="100%">
+</p>
+
 # vms-lighttpd
 
 A port of [lighttpd](https://www.lighttpd.net/) 1.4 to OpenVMS (x86-64 and IA64): a light,
@@ -63,5 +67,13 @@ It stores only the VMS delta over the signed upstream release, the same way as i
 - `docs/`: the plan, decisions (`DECISIONS.md`), the porting log and the results of each phase
 
 Home page for all the ports: [openvms.issinoho.com](https://openvms.issinoho.com).
+
+## Artwork
+
+`docs/images/banner.svg` and `docs/images/icon.svg` were made for this project in the style
+of classic DECwindows and VT terminals, like those of its sibling ports. The globe mark in
+them is our own drawing, not lighttpd's logo.
+
+## Licence
 
 lighttpd is distributed under the revised BSD licence (`COPYING` in the kit).
