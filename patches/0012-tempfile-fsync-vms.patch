@@ -1,0 +1,28 @@
+Subject: chunk: fsync() request-body temp files after writing on VMS
+
+Request bodies over 64 KB are spooled to a temporary file and later read
+back, through another descriptor, to forward them to a FastCGI/proxy
+backend.  On OpenVMS a descriptor sees a file's end-of-file mark as it was
+when that descriptor last synchronised with the file; data written through
+another, still open, descriptor is beyond it until that descriptor is
+flushed (same effect as patch 0007 for logs; probes/r_tmpfile.c, and
+vms-mariadb DECISIONS D10).  pread() then returned 0 at offset 0 of a
+65535-byte spool file, the backend write failed and the client got 503
+(Phase 3: every POST/upload over 64 KB).
+
+On VMS, fsync() the temp file after each write into it.  This only costs
+on request bodies large enough to be spooled.
+
+--- a/src/chunk.c
++++ b/src/chunk.c
+@@ -1062,6 +1062,10 @@
+ 	      #endif
+ 
+ 		if ((size_t) written == len) {
++		  #ifdef __VMS
++			/* make the data visible to other descriptors (EOF mark) */
++			fsync(dst_c->file.fd);
++		  #endif
+ 			dst_c->file.length += len;
+ 			dest->bytes_in += len;
+ 			return 0;

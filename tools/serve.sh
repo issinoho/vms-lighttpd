@@ -56,6 +56,18 @@ stop)
     vms dcl "delete/entry=$(cat "$entry_file")" || true
     rm -f "$entry_file"
     ;;
+phpsetup)
+    # Phase 3: PHP test scripts into the docroot (sftp writes Stream_LF),
+    # then the Phase 2 tree + FastCGI config + [.T3POOL]PHP.INI
+    "$top/tools/push.sh" "$node" >/dev/null
+    stage=$top/staging/$UPSTREAM_NAME-$UPSTREAM_VERSION
+    vms put "$stage"/vmsport/tests/php/*.php -- "$remote/T2/HTDOCS"
+    vms dcl "set default $tree" "@[.VMSPORT.TESTS]P3SETUP.COM ${BIND:-0.0.0.0} ${PHP_ROOT_NAME:-PHP_ROOT}" | grep -E 'P3SETUP-DONE|fastcgi|port" =>' || true
+    ;;
+poolstart|poolstop|poolstatus)
+    vms dcl "set default $tree" "@[.VMSPORT.PHP]PHP_POOL.COM ${op#pool} ${POOL_COUNT:-4} 19000 [.T3POOL] ${PHP_ROOT_NAME:-PHP_ROOT}" |
+        grep -E 'PHP_POOL|%' || true
+    ;;
 log)
     mkdir -p "$top/out"
     vms get "$remote/P2SERVER.LOG" "$top/out/p2server-$node.log" || true

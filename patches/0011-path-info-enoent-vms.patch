@@ -1,0 +1,24 @@
+Subject: response: treat ENOENT as possible PATH_INFO on VMS, as on _WIN32
+
+A request for /script.php/extra/path stats the whole path first; when a
+leading component is a file, POSIX systems fail with ENOTDIR and lighttpd
+then looks for the script and sets PATH_INFO.  The OpenVMS C RTL, like
+_WIN32, fails with ENOENT instead, so such requests got 404 (Phase 3:
+env.php/extra/path; phpBB's app.php/... routes depend on PATH_INFO).
+Treat ENOENT as possible PATH_INFO on VMS too, as upstream does for
+_WIN32; a path that really does not exist still ends in 404 after the
+walk back finds no file.
+
+--- a/src/response.c
++++ b/src/response.c
+@@ -160,8 +160,9 @@
+ 				r->http_status = 200;
+ 				return HANDLER_FINISHED;
+ 			}
+-		  #ifdef _WIN32
++		  #if defined(_WIN32) || defined(__VMS)
+ 			/* _WIN32 returns ENOENT instead of ENOTDIR for PATH_INFO */
++			/* (so does the OpenVMS C RTL) */
+ 			break;
+ 		  #else
+ 			__attribute_fallthrough__

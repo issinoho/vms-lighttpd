@@ -155,3 +155,24 @@ x86 46 KB/s; a 256 KB or 1 MB SO_SNDBUF changes nothing. lighttpd matches these 
 mssdflt 536, SACK/timestamps off) or the hosts' network setup; tuning it is a system change
 for the user. Consequences: tests move 2 MB, not 100 MB; Phase 4 benchmarks must compare
 servers on the same node and network, and will be dominated by this limit for large pages.
+
+D4 as built (2026-10-08): `vmsport/php/php_pool.com START|STOP|STATUS [count] [base-port]
+[pool-dir] [php-root] [max-req]` starts detached `LTPHP_<port>` processes running
+`PHP_CGI.EXE -c <pool>PHP.INI -b 127.0.0.1:<port>` in a DCL restart loop, with explicit
+quotas; `vmsport/php/php.ini` is the pool's ini (opcache needs `opcache.lockfile_path`
+on VMS; no `/tmp`). PHP's own recycling (`PHP_FCGI_MAX_REQUESTS`) is off by default: it
+drops requests queued on the exiting process (PORTING_LOG #22). A killed PHP process costs
+no requests: lighttpd marks the backend down and uses the others; `START` again restarts
+only the missing ones.
+
+## D11. Which PHP on each node
+
+**Status:** approved by the user (2026-10-08) for x86; IA64 follows the same default.
+
+Both nodes now have two logical names. x86: `PHP_ROOT` = `[SYS0.SYSCOMMON.APACHE.PHP.]`,
+PHP **8.1.23** (mysqli, gd, mbstring built in); `PHP$ROOT` = VSI's PHP 8.0.10 kit (no
+mysqli on x86). The user chose `PHP_ROOT` for the pool, overriding the earlier
+"`PHP$ROOT` first" rule (which still applies to the recon script). IA64 (reinstalled during
+Phase 3): `PHP_ROOT` = `DKA800:[PHP.]`, PHP **8.0.29**, same layout and built-ins as the
+x86 8.1 kit; `PHP$ROOT` points to a directory that no longer exists. `php_pool.com`
+defaults to `PHP_ROOT`; `php-vsi80.ini` covers VSI's 8.0 kit layout if wanted.

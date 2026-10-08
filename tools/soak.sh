@@ -24,9 +24,15 @@ worker() {
     local urls=("http://$HOST:18080/" "http://$HOST:18080/plain.txt" "http://$HOST:18080/var.txt"
                 "http://$HOST:18080/sub/" "http://$HOST:18080/nope.html" "https://$HOST:18443/index.html"
                 "range" "https://$HOST:18443/plain.txt")
+    # SOAK_PHP=1: Phase 3 mix, mostly PHP through the FastCGI pool
+    [ "${SOAK_PHP:-0}" = 1 ] && urls=("http://$HOST:18080/info.php" "http://$HOST:18080/env.php/a/b?x=1"
+                "http://$HOST:18080/pid.php" "http://$HOST:18080/session.php" "post"
+                "https://$HOST:18443/info.php" "http://$HOST:18080/big.php?n=32768" "http://$HOST:18080/plain.txt")
     while [ "$(date +%s)" -lt "$end" ]; do
         u=${urls[$((RANDOM % ${#urls[@]}))]}
-        if [ "$u" = range ]; then
+        if [ "$u" = post ]; then
+            r=$(curl -s -o /dev/null --max-time 30 -d a=1 -d b=2 -w '%{http_code} %{time_total}' "http://$HOST:18080/post.php")
+        elif [ "$u" = range ]; then
             r=$(curl -s -o /dev/null --max-time 30 -r 0-65535 -w '%{http_code} %{time_total}' "http://$HOST:18080/big.bin")
         else
             r=$(curl -sk --http2 -o /dev/null --max-time 30 -w '%{http_code} %{time_total}' "$u")

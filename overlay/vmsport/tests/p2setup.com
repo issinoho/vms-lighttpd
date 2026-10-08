@@ -59,7 +59,10 @@ $ write f "accesslog.filename   = """, udir, "/logs/access.log"""
 $ write f "server.upload-dirs   = ( """, udir, "/tmp"" )"
 $ write f "server.port          = 18080"
 $ write f "server.bind          = """, bind, """"
-$ write f "server.modules       = ( ""mod_access"", ""mod_accesslog"", ""mod_dirlisting"", ""mod_staticfile"", ""mod_openssl"" )"
+$! mod_indexfile, mod_dirlisting and mod_staticfile are appended by lighttpd
+$! after the listed modules; listing mod_staticfile here would put it ahead
+$! of mod_fastcgi (Phase 3), which then never sees .php requests
+$ write f "server.modules       = ( ""mod_access"", ""mod_accesslog"", ""mod_openssl"" )"
 $ write f "index-file.names     = ( ""index.html"" )"
 $ write f "dir-listing.activate = ""enable"""
 $ write f "mimetype.assign      = ( "".html"" => ""text/html"", "".txt"" => ""text/plain"", "".bin"" => ""application/octet-stream"" )"
