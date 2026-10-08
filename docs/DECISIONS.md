@@ -141,7 +141,7 @@ D8 as built (2026-10-08, patch 0008): non-Stream_LF/UDF files up to 32 MB are re
 the CRTL and sent from memory **with their exact Content-Length** (Range/ETag still work),
 rather than chunked; larger ones are refused with 500 and a log entry. One warning per file.
 
-## D10. TCP throughput on the nodes is ~50-130 KB/s per connection, for any program
+## D10. TCP throughput (first measured ~50-130 KB/s; see "D10 revisited": mostly the client)
 
 **Status:** finding (2026-10-08), reported to the user; outside the port.
 
@@ -176,3 +176,25 @@ mysqli on x86). The user chose `PHP_ROOT` for the pool, overriding the earlier
 Phase 3): `PHP_ROOT` = `DKA800:[PHP.]`, PHP **8.0.29**, same layout and built-ins as the
 x86 8.1 kit; `PHP$ROOT` points to a directory that no longer exists. `php_pool.com`
 defaults to `PHP_ROOT`; `php-vsi80.ini` covers VSI's 8.0 kit layout if wanted.
+
+D10 revisited (2026-10-08, user-approved runtime experiments, `tools/tcptune.sh`, all
+settings restored afterwards): one at a time, `tcpnodelack=1`, `tcp_cwnd_segments=10`,
+256 KB send/recv space, SACK + timestamps, and all together, measured with `r_blast`
+(KB/s, 20 s):
+
+| | x86 loopback | x86 LAN | IA64 loopback | IA64 LAN |
+|---|---|---|---|---|
+| baseline | 97 | – | 457 | 1,111 |
+| tcpnodelack=1 | – | – | 458 | 663 |
+| cwnd 10 | 98 | 1,393 | 453 | 761 |
+| 256 KB space | 100 | – | – | 725 |
+| SACK + ts | 99 | 1,117 | 458 | 621 |
+| all | 98 | – | 457 | – |
+
+(– = no reading.) No setting helps; the defaults stay. The LAN figures are 10-20x the
+Phase 2 ones because the WSL/Windows client was short of memory then (Claude Code had to
+stop a job for low memory; after the user freed memory the same probe moved 0.6-1.4 MB/s).
+So D10's ~50-130 KB/s was mostly the client, not VMS. x86 loopback stays ~98 KB/s whatever
+the TCP settings (IA64: ~457 KB/s): a property of the x86 VM or of VMSCURL writing to NLA0:
+there, not TCP tuning; it does not affect serving remote clients. `tools/vms_tcpdiag.com`
+is the read-only diagnosis (settings, NICs, `netstat -s`).
