@@ -70,13 +70,15 @@ pids=$(seq 1 16 | xargs -P 8 -I{} curl -s --max-time 60 "$H/pid.php?sleep=500" |
 n=$(echo "$pids" | grep -c .)
 [ "$n" -ge 3 ]; check "requests spread over the pool" $? "$n distinct PHP processes"
 if [ "${KILL:-1}" = 1 ]; then
-    victim=$("$top/tools/serve.sh" "$node" poolstatus | awk '/LTPHP_19001 pid/{print $4}')
-    "$top/tools/vms.sh" "$node" dcl "stop/id=$victim" >/dev/null 2>&1
+    # the test pool second process (never a live pool: see serve.sh POOL_BASE)
+    victim_name=LTPHP_$((${POOL_BASE:-19100} + 1))
+    victim=$("$top/tools/serve.sh" "$node" poolstatus | awk -v n="$victim_name" '$2 == n && $3 == "pid" {print $4}')
+    [ -n "$victim" ] && "$top/tools/vms.sh" "$node" dcl "stop/id=$victim" >/dev/null 2>&1
     codes=$(seq 1 12 | xargs -P 4 -I{} curl -s -o /dev/null -w '%{http_code}\n' --max-time 60 "$H/pid.php?sleep=200" | sort | uniq -c | tr -s ' ' | tr '\n' ' ')
     echo "$codes" | grep -qv ' 200' ; bad=$?
     [ "$(echo "$codes" | grep -o ' 200' | wc -l)" = 1 ] && ! echo "$codes" | grep -qE ' (5[0-9][0-9]|000)'
     check "one backend killed: all requests still 200" $? "codes: $codes (killed $victim)"
-    "$top/tools/serve.sh" "$node" poolstart | grep -q 'started LTPHP_19001'
+    "$top/tools/serve.sh" "$node" poolstart | grep -q "started $victim_name"
     check "poolstart restarts only the missing backend" $?
 fi
 

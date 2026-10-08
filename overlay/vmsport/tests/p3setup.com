@@ -2,13 +2,16 @@ $! P3SETUP.COM - Phase 3 test tree: the Phase 2 tree plus PHP over FastCGI.
 $! Run from the tree's top directory, after the host has uploaded the PHP
 $! test scripts into [.T2.HTDOCS] (stream-LF).
 $!   [.T3POOL]PHP.INI   from [.VMSPORT.PHP]PHP.INI with @POOL@ filled in
-$!   [.T2]LIGHTTPD.CONF Phase 2 config + mod_fastcgi, 4 backends on 19000-19003
+$!   [.T2]LIGHTTPD.CONF Phase 2 config + mod_fastcgi, 4 backends on P3..P3+3
 $! P1: bind address (default 0.0.0.0)
 $! P2: PHP root logical name (default PHP_ROOT); its kit decides the template:
 $!     [BIN]PHP_CGI.EXE (PHP 8.1 kit) -> PHP.INI, else PHP-VSI80.INI
+$! P3: the pool's first port (default 19100; tools/serve.sh POOL_BASE)
 $ set noon
 $ set process/parse_style=extended
 $ say = "write sys$output"
+$ base = 19100
+$ if p3 .nes. "" then base = f$integer(p3)
 $ @[.VMSPORT.TESTS]P2SETUP.COM 'p1'
 $ if f$search("T3POOL.DIR") .eqs. "" then create/directory [.T3POOL]
 $!
@@ -59,7 +62,7 @@ $ n = 0
 $fcgi_loop:
 $ sep = ","
 $ if n .eq. 3 then sep = ""
-$ write f "    ( ""host"" => ""127.0.0.1"", ""port"" => ", 19000 + n, ", ""check-local"" => ""enable"" )", sep
+$ write f "    ( ""host"" => ""127.0.0.1"", ""port"" => ", base + n, ", ""check-local"" => ""enable"" )", sep
 $ n = n + 1
 $ if n .lt. 4 then goto fcgi_loop
 $ write f "  ) )"

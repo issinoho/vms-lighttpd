@@ -1,14 +1,17 @@
 $! P4SETUP.COM - Phase 4 configuration: lighttpd serving phpBB from the work
-$! directory's [.PHPBB], PHP from the Phase 3 pool ([.T3POOL], 19000-19003).
+$! directory's [.PHPBB], PHP from the Phase 3 pool ([.T3POOL], P2..P2+3).
 $! Run from the tree's top directory; writes [.T4]LIGHTTPD.CONF and copies
 $! [.VMSPORT.CONF]PHPBB.CONF beside it.  HTTP :18080, HTTPS :18443 with the
 $! Phase 2 certificate ([.T2]SERVER.PEM).
 $! P1: bind address (default 0.0.0.0)
+$! P2: the pool's first port (default 19100; tools/serve.sh POOL_BASE)
 $ set noon
 $ set process/parse_style=extended
 $ say = "write sys$output"
 $ bind = p1
 $ if bind .eqs. "" then bind = "0.0.0.0"
+$ base = 19100
+$ if p2 .nes. "" then base = f$integer(p2)
 $ if f$search("T4.DIR") .eqs. "" then create/directory [.T4]
 $ if f$search("[.T4]LOGS.DIR") .eqs. "" then create/directory [.T4.LOGS]
 $ if f$search("[.T4]TMP.DIR") .eqs. "" then create/directory [.T4.TMP]
@@ -43,7 +46,7 @@ $ n = 0
 $fcgi_loop:
 $ sep = ","
 $ if n .eq. 3 then sep = ""
-$ write f "    ( ""host"" => ""127.0.0.1"", ""port"" => ", 19000 + n, ", ""check-local"" => ""enable"", ""broken-scriptfilename"" => ""enable"" )", sep
+$ write f "    ( ""host"" => ""127.0.0.1"", ""port"" => ", base + n, ", ""check-local"" => ""enable"", ""broken-scriptfilename"" => ""enable"" )", sep
 $ n = n + 1
 $ if n .lt. 4 then goto fcgi_loop
 $ write f "  ) )"

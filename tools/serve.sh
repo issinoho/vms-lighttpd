@@ -8,6 +8,9 @@
 #   stop   DELETE/ENTRY the job
 #   log    fetch the job log and lighttpd's error/access logs into out/
 # The server listens on 18080 (HTTP) and 18443 (HTTPS) on $BIND (default 0.0.0.0).
+# The test PHP pool listens on $POOL_BASE.. (default 19100-19103), away from a
+# live service's pool on 19000-19003: PHP_POOL names its processes LTPHP_<port>
+# and stops them by name, so the two must never share ports.
 set -euo pipefail
 top=$(cd "$(dirname "$0")/.." && pwd)
 node=${1:?usage: serve.sh <node> setup|start|stop|log}
@@ -62,16 +65,16 @@ phpsetup)
     "$top/tools/push.sh" "$node" >/dev/null
     stage=$top/staging/$UPSTREAM_NAME-$UPSTREAM_VERSION
     vms put "$stage"/vmsport/tests/php/*.php -- "$remote/T2/HTDOCS"
-    vms dcl "set default $tree" "@[.VMSPORT.TESTS]P3SETUP.COM ${BIND:-0.0.0.0} ${PHP_ROOT_NAME:-PHP_ROOT}" | grep -E 'P3SETUP-DONE|fastcgi|port" =>' || true
+    vms dcl "set default $tree" "@[.VMSPORT.TESTS]P3SETUP.COM ${BIND:-0.0.0.0} ${PHP_ROOT_NAME:-PHP_ROOT} ${POOL_BASE:-19100}" | grep -E 'P3SETUP-DONE|fastcgi|port" =>' || true
     ;;
 phpbbsetup)
     # Phase 4: phpBB (uploaded to <workdir>.PHPBB] and installed) behind lighttpd;
     # phpBB will not run while its install directory exists
     "$top/tools/push.sh" "$node" >/dev/null
-    vms dcl "set default $tree"         'if f$search("[-.PHPBB]INSTALL.DIR") .nes. "" then rename [-.PHPBB]INSTALL.DIR [-.PHPBB]INSTALL_DONE.DIR'         "@[.VMSPORT.TESTS]P4SETUP.COM ${BIND:-0.0.0.0}" | grep -E 'P4SETUP|%' || true
+    vms dcl "set default $tree"         'if f$search("[-.PHPBB]INSTALL.DIR") .nes. "" then rename [-.PHPBB]INSTALL.DIR [-.PHPBB]INSTALL_DONE.DIR'         "@[.VMSPORT.TESTS]P4SETUP.COM ${BIND:-0.0.0.0} ${POOL_BASE:-19100}" | grep -E 'P4SETUP|%' || true
     ;;
 poolstart|poolstop|poolstatus)
-    vms dcl "set default $tree" "@[.VMSPORT.PHP]PHP_POOL.COM ${op#pool} ${POOL_COUNT:-4} 19000 [.T3POOL] ${PHP_ROOT_NAME:-PHP_ROOT}" |
+    vms dcl "set default $tree" "@[.VMSPORT.PHP]PHP_POOL.COM ${op#pool} ${POOL_COUNT:-4} ${POOL_BASE:-19100} [.T3POOL] ${PHP_ROOT_NAME:-PHP_ROOT}" |
         grep -E 'PHP_POOL|%' || true
     ;;
 log)
