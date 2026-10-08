@@ -98,28 +98,14 @@ $ endif
 $ if f$edit(vmslighttpd_php, "UPCASE") .eqs. "YES" then -
      @VMSLIGHTTPD$ROOT:[COM]PHP_POOL STATUS 'vmslighttpd_php_count' 'vmslighttpd_php_base' -
         'phpdir' 'vmslighttpd_php_root'
-$! the last 5 lines of the error log: read it here, as TYPE/TAIL does not
-$! support Stream_LF files (%TYPE-W-OPENIN, RMS-F-ORG)
-$ if f$search(logs + "error.log") .nes. ""
+$ tail_file = logs + "error.log"
+$ gosub tail
+$! not running: why it stopped or failed to start (configuration errors come
+$! before lighttpd opens its error log, so they are only in SERVER.LOG)
+$ if pid .eqs. ""
 $ then
-$   say "--- last lines of ", logs, "error.log"
-$   open/read/share=write elog 'logs'error.log
-$   n = 0
-$tail_read:
-$   read/end=tail_show elog line
-$   tail_'f$string(n - (n / 5) * 5)' = line
-$   n = n + 1
-$   goto tail_read
-$tail_show:
-$   close elog
-$   k = n - 5
-$   if k .lt. 0 then k = 0
-$tail_loop:
-$   if k .ge. n then goto tail_done
-$   say tail_'f$string(k - (k / 5) * 5)'
-$   k = k + 1
-$   goto tail_loop
-$tail_done:
+$   tail_file = logs + "SERVER.LOG"
+$   gosub tail
 $ endif
 $ exit 1
 $!
@@ -151,6 +137,32 @@ $ if f$type(vmslighttpd_keep_logs) .nes. "" then keep = f$integer(vmslighttpd_ke
 $ purge/nolog/keep='keep' 'logs'error.log,access.log
 $ say "VMSLIGHTTPD: logs rotated (keeping ", keep, " versions)"
 $ exit 1
+$!
+$! the last 5 lines of tail_file: read here, as TYPE/TAIL does not support
+$! Stream_LF files (%TYPE-W-OPENIN, RMS-F-ORG); long lines are cut, as DCL
+$! cannot write a string over 255 characters (%DCL-W-TKNOVF); SERVER.LOG stops
+$! before LOGINOUT's "job terminated" and accounting lines
+$tail:
+$ if f$search(tail_file) .eqs. "" then return
+$ say "--- last lines of ", tail_file
+$ open/read/share=write tfile 'tail_file'
+$ n = 0
+$tail_read:
+$ read/end=tail_show tfile line
+$ if f$locate("job terminated at", line) .lt. f$length(line) then goto tail_show
+$ if f$length(line) .gt. 250 then line = f$extract(0, 247, line) + "..."
+$ tail_'f$string(n - (n / 5) * 5)' = line
+$ n = n + 1
+$ goto tail_read
+$tail_show:
+$ close tfile
+$ k = n - 5
+$ if k .lt. 0 then k = 0
+$tail_loop:
+$ if k .ge. n then return
+$ say tail_'f$string(k - (k / 5) * 5)'
+$ k = k + 1
+$ goto tail_loop
 $!
 $! pid of the process named VMSLIGHTTPD (any user), or ""
 $find_server:

@@ -63,6 +63,11 @@ $ write f "    ( ""host"" => ""127.0.0.1"", ""port"" => ", 19000 + n, ", ""check
 $ n = n + 1
 $ if n .lt. 4 then goto fcgi_loop
 $ write f "  ) )"
+$! reverse proxy: X-Forwarded-For/-Proto from any client (test only; a real
+$! configuration trusts the proxy's address alone)
+$ write f "server.modules += ( ""mod_extforward"" )"
+$ write f "extforward.forwarder = ( ""all"" => ""trust"" )"
+$ write f "extforward.headers = ( ""X-Forwarded-For"" )"
 $ close f
 $ say "P3SETUP: pool ", upool
 $ type [.T2]LIGHTTPD.CONF

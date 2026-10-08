@@ -33,6 +33,9 @@ check "QUERY_STRING and \$_GET" $?
 check "REQUEST_METHOD, SERVER_PORT" $?
 e=$(curl -sk --http2 --max-time 30 "$S/env.php")
 [ "$(echo "$e" | j "d['HTTPS']")" = on ]; check "HTTPS=on over TLS (h2)" $?
+e=$(curl -s --max-time 30 -H 'X-Forwarded-For: 203.0.113.7' -H 'X-Forwarded-Proto: https' "$H/env.php")
+[ "$(echo "$e" | j "d['REMOTE_ADDR']")" = 203.0.113.7 ] && [ "$(echo "$e" | j "d['HTTPS']")" = on ]
+check "behind a proxy: X-Forwarded-For/-Proto" $? "$(echo "$e" | j "d['REMOTE_ADDR'], d['HTTPS']")"
 
 # --- request bodies -----------------------------------------------------------
 p=$(curl -s --max-time 30 -d a=1 -d b=hello "$H/post.php")

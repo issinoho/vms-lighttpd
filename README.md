@@ -6,7 +6,7 @@ kit (SSL3) and PHP as a pool of persistent FastCGI processes. It is meant as a m
 alternative to VSI's Apache; [phpBB](https://www.phpbb.com/) 3.3 runs on it with PHP 8.1 and
 [vms-mariadb](https://github.com/issinoho/vms-mariadb).
 
-**Status:** lighttpd **1.4.85**, kit **LIGHTTPD V1.4-85E1** (preview) for x86-64 and IA64.
+**Status:** lighttpd **1.4.85**, kit **LIGHTTPD V1.4-85E2** (preview) for x86-64 and IA64.
 Static files, HTTPS (TLS 1.3, and 1.2 when enabled), HTTP/2, PHP over FastCGI, phpBB, and a
 service that runs under its own account and drops its privileges after binding: all tested on
 both architectures (see `docs/PHASE0.md` ... `docs/PHASE5.md`).
@@ -43,6 +43,8 @@ account, data and settings. The kit's `[VMSLIGHTTPD.DOC]README.VMS` has the deta
   converted bytes up to 32 MB, with a warning to `CONVERT` them.
 - **Connections** are limited by the account's FILLM and BYTLM quotas, which the configure
   procedure sets.
+- **Behind a reverse proxy** that ends TLS, set `extforward.forwarder` to the proxy's address
+  (commented in the template): PHP then sees the client's address and `HTTPS=on`.
 - **PHP** runs as `PHP_POOL.COM`'s detached `LTPHP_<port>` processes (`PHP_CGI.EXE -b`);
   lighttpd does not start processes itself (no mod_cgi or FastCGI `bin-path` on VMS).
 
