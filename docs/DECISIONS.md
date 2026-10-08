@@ -198,3 +198,28 @@ So D10's ~50-130 KB/s was mostly the client, not VMS. x86 loopback stays ~98 KB/
 the TCP settings (IA64: ~457 KB/s): a property of the x86 VM or of VMSCURL writing to NLA0:
 there, not TCP tuning; it does not affect serving remote clients. `tools/vms_tcpdiag.com`
 is the read-only diagnosis (settings, NICs, `netstat -s`).
+
+## D12. Running lighttpd as a service
+
+**Status:** approved by the user (2026-10-08).
+
+- **Account** `LIGHTTPD` (new UIC), batch access only, `TMPMBX,NETMBX`, quotas for a
+  network server: FILLM = CHANNELCNT - 64 (at most 2000; lighttpd's fd limit, patch 0001),
+  BYTLM = FILLM x 3500 (each socket takes ~3 KB, Phase 0). The PHP pool runs under it too.
+  Created/updated by `VMSLIGHTTPD$CONFIGURE.COM` (as SYSTEM), with the data tree (CONF, LOGS,
+  HTDOCS, PHP, TMP) and `SYS$MANAGER:VMSLIGHTTPD$CONFIG.COM`.
+- **Start** as vms-mariadb D15 route (a): `VMSLIGHTTPD$CONTROL START` submits
+  `VMSLIGHTTPD$BOOT` with `SUBMIT/USER=LIGHTTPD`; the job starts the pool and
+  `RUN/DETACHED/AUTHORIZE` LOGINOUT for the server (process `VMSLIGHTTPD`).
+- **Ports < 1024**: VMS TCP/IP requires SYSPRV, OPER or BYPASS (`probes/r_bindpriv.c`).
+  `LIGHTTPD.EXE` is installed `/PRIVILEGED=OPER`; patch 0014 disables every privilege but
+  `TMPMBX,NETMBX` right after the listeners are bound (verified: the running server's
+  CURPRIV is `TMPMBX,NETMBX`). As after `setuid()` on Unix, this guards against mistakes, not
+  against code that re-enables privileges with $SETPRV. Default port 80 (user's choice); on
+  x86 it needs Apache off port 80.
+- **Stop / rotate**: `LIGHTTPD_SIGNAL.EXE` sends C RTL signals (DCL cannot): SIGTERM for a
+  graceful stop (STOP/ID after 30 s), SIGHUP to reopen logs after `ROTATE` creates new
+  Stream_LF versions (then PURGE/KEEP). Both verified against the test server.
+- **PCSI product name `LIGHTTPD`**: `VMSLIGHTTPD` makes a 40-character kit name and PCSI
+  allows 39; VSI ships no lighttpd. Logical names, directories and procedures keep the
+  `VMSLIGHTTPD` prefix. Kit version V1.4-85E1.

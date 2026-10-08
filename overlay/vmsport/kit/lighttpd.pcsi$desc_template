@@ -1,0 +1,45 @@
+--
+-- PCSI product description for lighttpd (vms-lighttpd) on OpenVMS.
+-- Product name LIGHTTPD: VMSLIGHTTPD makes a 40-character kit name (PCSI allows
+-- 39); VSI ships no lighttpd.  Logical names and directories keep VMSLIGHTTPD.
+-- Template: tools/prepare.sh substitutes @PRODUCER@, @BASE@ and @PCSIVERSION@.
+--
+product @PRODUCER@ @BASE@ LIGHTTPD @PCSIVERSION@ full ;
+
+    -- lighttpd links VSI's OpenSSL 3.0 shared images (SYS$SHARE:SSL3$*_SHR32).
+    software VSI @BASE@ SSL3 ;
+
+    information RELEASE_NOTES phase after ;
+
+    directory [VMSLIGHTTPD] ;
+    directory [VMSLIGHTTPD.BIN] ;
+    directory [VMSLIGHTTPD.COM] ;
+    directory [VMSLIGHTTPD.CONF] ;
+    directory [VMSLIGHTTPD.DOC] ;
+
+    file [VMSLIGHTTPD.BIN]LIGHTTPD.EXE ;
+    file [VMSLIGHTTPD.BIN]LIGHTTPD_SIGNAL.EXE ;
+    file [VMSLIGHTTPD.COM]VMSLIGHTTPD$CONTROL.COM ;
+    file [VMSLIGHTTPD.COM]VMSLIGHTTPD$BOOT.COM ;
+    file [VMSLIGHTTPD.COM]VMSLIGHTTPD$SERVER.COM ;
+    file [VMSLIGHTTPD.COM]VMSLIGHTTPD$CONFIGURE.COM ;
+    file [VMSLIGHTTPD.COM]PHP_POOL.COM ;
+    file [VMSLIGHTTPD.CONF]LIGHTTPD.CONF ;
+    file [VMSLIGHTTPD.CONF]MIME.CONF ;
+    file [VMSLIGHTTPD.CONF]PHPBB.CONF ;
+    file [VMSLIGHTTPD.CONF]PHP.INI ;
+    file [VMSLIGHTTPD.CONF]PHP-VSI80.INI ;
+    file [VMSLIGHTTPD.DOC]README.VMS ;
+    file [VMSLIGHTTPD.DOC]COPYING. ;
+    file [VMSLIGHTTPD.DOC]NEWS. ;
+    file [SYS$STARTUP]VMSLIGHTTPD$STARTUP.COM ;
+    file [SYS$STARTUP]VMSLIGHTTPD$SHUTDOWN.COM ;
+
+    -- Define VMSLIGHTTPD$ROOT and install LIGHTTPD.EXE (/PRIVILEGED=OPER) now.
+    execute postinstall "@PCSI$DESTINATION:[SYS$STARTUP]VMSLIGHTTPD$STARTUP.COM INSTALL" interactive ;
+    -- On removal: stop the service, remove the installed image, deassign.
+    execute install "CONTINUE" remove "@PCSI$DESTINATION:[SYS$STARTUP]VMSLIGHTTPD$STARTUP.COM REMOVE" ;
+
+    information POST_INSTALL phase after ;
+
+end product ;

@@ -1,0 +1,76 @@
+lighttpd @VERSION@ for OpenVMS (vms-lighttpd @KITVERSION@, @ARCH@)
+=====================================================================
+
+lighttpd is a light, fast web server (https://www.lighttpd.net/).  This kit
+is a native OpenVMS build with VSI C, using VSI's SSL3 (OpenSSL 3.0) for
+HTTPS and HTTP/2, and runs PHP (VSI's PHP kits, or the PHP 8.1 kit) as a
+pool of persistent FastCGI processes.  Source, patches and test results:
+https://github.com/issinoho/vms-lighttpd
+
+Requirements: VSI TCP/IP Services, VSI SSL3 (OpenSSL 3.0); for PHP, a PHP kit
+with PHP_CGI.EXE ([BIN]PHP_CGI.EXE or [CSWS]PHP-CGI.EXE) under a rooted
+logical name (default PHP_ROOT).
+
+Installed files (VMSLIGHTTPD$ROOT, defined by VMSLIGHTTPD$STARTUP)
+-----------------------------------------------------------------
+  [BIN]LIGHTTPD.EXE          the server; installed /PRIVILEGED=OPER
+  [BIN]LIGHTTPD_SIGNAL.EXE   sends TERM/HUP to the server (stop, log rotation)
+  [COM]VMSLIGHTTPD$CONFIGURE.COM   one-time setup, as SYSTEM
+  [COM]VMSLIGHTTPD$CONTROL.COM     START, STOP, RESTART, STATUS, ROTATE
+  [COM]VMSLIGHTTPD$BOOT.COM        batch job (as the account) that starts it
+  [COM]VMSLIGHTTPD$SERVER.COM      the server process
+  [COM]PHP_POOL.COM          the PHP FastCGI pool
+  [CONF]                     templates: LIGHTTPD.CONF, MIME.CONF, PHPBB.CONF,
+                             PHP.INI (PHP 8.1 kit), PHP-VSI80.INI (VSI's 8.0 kit)
+  SYS$STARTUP:VMSLIGHTTPD$STARTUP.COM, VMSLIGHTTPD$SHUTDOWN.COM
+
+Setting up
+----------
+As SYSTEM:
+
+    $ @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONFIGURE
+
+asks for (or takes as parameters) the service account (default LIGHTTPD) and
+its UIC, a data directory, the HTTP port (default 80), whether to start at
+boot, and whether to run the PHP pool.  It creates the account (batch access
+only; privileges TMPMBX,NETMBX; quotas for a network server), the data tree
+(CONF, LOGS, HTDOCS, PHP, TMP, owned by the account), writes
+CONF:LIGHTTPD.CONF and PHP:PHP.INI from the templates (existing files are
+kept), and the site settings in SYS$MANAGER:VMSLIGHTTPD$CONFIG.COM.
+
+    $ @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONTROL START | STOP | RESTART | STATUS | ROTATE
+
+START submits VMSLIGHTTPD$BOOT as the account; it starts the PHP pool
+(processes LTPHP_<port>) and the server (process VMSLIGHTTPD) as detached
+processes with the account's quotas.  STOP sends the server SIGTERM (it
+finishes requests in progress) and uses STOP/ID only after 30 seconds, then
+stops the pool.  ROTATE makes new versions of error.log and access.log, sends
+SIGHUP so that lighttpd reopens them, and purges to 7 versions
+(vmslighttpd_keep_logs).
+
+Notes for OpenVMS
+-----------------
+- Ports below 1024 need a privilege on VMS (SYSPRV, OPER or BYPASS).  The image
+  is installed with OPER; lighttpd disables every privilege except TMPMBX and
+  NETMBX as soon as its listeners are bound ("VMS: listeners bound" in the
+  log).  If another server (e.g. Apache) holds the port, lighttpd stops with
+  "Address already in use".
+- Configuration paths are UNIX form (/DEVICE/DIR/file).  Includes must be
+  absolute (use var.data + "/conf/...", as the template does).
+- Web content should be Stream_LF (files copied with sftp/FTP, or unzipped,
+  are).  Other record formats (variable, fixed, VFC, made by EDT, DCL CREATE,
+  COPY from older systems) are sent by their converted bytes, up to 32 MB, with
+  a warning naming the file; CONVERT them to Stream_LF to serve them directly.
+- The connection limit is the account's FILLM (lighttpd's server.max-fds) and
+  BYTLM (about 3.5 KB per connection); CONFIGURE sets FILLM to CHANNELCNT - 64,
+  at most 2000.
+- lighttpd 1.4.85 accepts TLS 1.3 only by default; for TLS 1.2 clients set
+  ssl.openssl.ssl-conf-cmd = ( "MinProtocol" => "TLSv1.2" ).
+- PHP: PHP's own process recycling (PHP_FCGI_MAX_REQUESTS) is off, as it loses
+  requests queued at the moment a process exits.  opcache needs
+  opcache.lockfile_path (set in the PHP.INI templates): there is no /tmp.
+- For PHP command-line tools that use Symfony Console (e.g. phpBB's
+  install/phpbbcli.php), DEFINE COLUMNS 132 and LINES 48 first.
+- Not supported on VMS: mod_cgi and fastcgi "bin-path" (lighttpd does not
+  start processes; use PHP_POOL.COM), piped logs, server.username/chroot
+  (the account is the identity), server.max-worker.

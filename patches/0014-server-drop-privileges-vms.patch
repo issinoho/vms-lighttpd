@@ -1,0 +1,36 @@
+Subject: server: drop VMS privileges once the listeners are bound
+
+On Unix, lighttpd binds its listening sockets as root and then switches to
+server.username.  OpenVMS has no root: VMS TCP/IP lets only processes with
+SYSPRV, OPER or BYPASS bind ports below 1024 (probes/r_bindpriv.c).  The kit
+installs LIGHTTPD.EXE with /PRIVILEGED=OPER and runs it under an account
+with only TMPMBX and NETMBX (docs/DECISIONS.md D12).
+
+Right after network_init() has bound the listeners, disable every privilege
+for the rest of the process's life and keep TMPMBX and NETMBX
+(vmsport/vms_privs.c).  Logged, so the error log shows the drop happened;
+a failure stops the server rather than leaving it privileged.
+
+--- a/src/server.c
++++ b/src/server.c
+@@ -1801,6 +1801,20 @@
+ 		return -1;
+ 	}
+ 	srv->stdin_fd = -1;
++  #ifdef __VMS
++	/* ports < 1024 needed OPER (installed-image privilege): drop it */
++	{
++		extern unsigned int vms_drop_privileges(void);
++		const unsigned int vst = vms_drop_privileges();
++		if (0 != vst) {
++			log_error(srv->errh, __FILE__, __LINE__,
++			  "VMS: could not drop privileges (status %%X%08X)", vst);
++			return -1;
++		}
++		log_error(srv->errh, __FILE__, __LINE__,
++		  "VMS: listeners bound; privileges now TMPMBX,NETMBX");
++	}
++  #endif
+ 
+ 	if (i_am_root) {
+ #ifdef HAVE_PWD_H

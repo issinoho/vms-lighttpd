@@ -64,4 +64,37 @@ cc -O1 -o "$lemon" "$stage/src/lemon.c" || die "cannot build lemon with the host
     die "lemon failed"
 [ -f "$stage/src/configparser.c" ] && [ -f "$stage/src/configparser.h" ] ||
     die "lemon did not write configparser.c/.h"
+# --- PCSI kit inputs (vmsport/kit/MAKE_KIT.COM builds the kit on each node) --
+step "PCSI kit inputs"
+kit=$stage/vmsport/kit
+: "${KIT_PRODUCER:=ISSINOHO}"
+# lighttpd 1.4.85 with VMS patch level 1 is PCSI V1.4-85E1 (update = third
+# part, ECO = our patch level), as the sibling kits do.
+IFS=. read -r major minor update _ <<< "$UPSTREAM_VERSION"
+pcsiversion="V$major.$minor-${update:-0}E$VMS_PATCH_LEVEL"
+kitversion="$UPSTREAM_VERSION-vms$VMS_PATCH_LEVEL"
+subst() {
+    sed -e "s/@PRODUCER@/$KIT_PRODUCER/g" -e "s/@BASE@/$1/g"         -e "s/@PCSIVERSION@/$pcsiversion/g" -e "s/@VERSION@/$UPSTREAM_VERSION/g"         -e "s/@KITVERSION@/$kitversion/g" -e "s/@ARCH@/$2/g"
+}
+lc=$(echo "$KIT_PRODUCT" | tr A-Z a-z)
+for base in I64VMS X86VMS; do
+    subst $base "" < "$kit/$lc.pcsi\$desc_template" > "$kit/PRODUCT-$base.PCSI\$DESC"
+    subst $base "" < "$kit/$lc.pcsi\$text_template" > "$kit/PRODUCT-$base.PCSI\$TEXT"
+done
+rm -f "$kit/$lc.pcsi\$desc_template" "$kit/$lc.pcsi\$text_template"
+subst "" "IA64 and x86-64" < "$kit/readme.vms" > "$kit/README.VMS"; rm -f "$kit/readme.vms"
+# shared pieces: the PHP pool and its ini templates, phpBB's rules,
+# upstream's MIME types
+cp "$stage/vmsport/php/php_pool.com" "$kit/PHP_POOL.COM"
+cp "$stage/vmsport/php/php.ini" "$kit/PHP.INI"
+cp "$stage/vmsport/php/php-vsi80.ini" "$kit/PHP-VSI80.INI"
+cp "$stage/vmsport/conf/phpbb.conf" "$kit/PHPBB.CONF"
+cp "$stage/doc/config/conf.d/mime.conf" "$kit/MIME.CONF"
+cp "$stage/COPYING" "$kit/COPYING."
+cp "$stage/NEWS" "$kit/NEWS."
+printf 'KIT_PRODUCER=%s
+KIT_PRODUCT=%s
+PCSI_VERSION=%s
+KIT_VERSION=%s
+' "$KIT_PRODUCER"     "$KIT_PRODUCT" "$pcsiversion" "$kitversion" > "$kit/kit.env"
 step "staged $stage"

@@ -11,7 +11,7 @@ $! There is no configure step: [.SRC]CONFIG.H is kept by hand (docs/DECISIONS.md
 $! and the modules in [.SRC]PLUGIN-STATIC.H are linked in (LIGHTTPD_STATIC).
 $! A source is compiled when its object is missing or older than the source;
 $! headers and qualifiers are not tracked, so use CLEAN after changing either.
-$! Output: [.VMS_<arch>]LIGHTTPD.EXE
+$! Output: [.VMS_<arch>]LIGHTTPD.EXE, LIGHTTPD_SIGNAL.EXE
 $!
 $ status = 44
 $ set noon
@@ -90,6 +90,8 @@ $ goto compile_loop
 $compile_ours:
 $ call compile [.VMSPORT]VMS_CRTL_INIT.C 'objdir'VMS_CRTL_INIT.OBJ
 $ call compile [.VMSPORT]VMS_IN6ADDR.C 'objdir'VMS_IN6ADDR.OBJ
+$ call compile [.VMSPORT]VMS_PRIVS.C 'objdir'VMS_PRIVS.OBJ
+$ call compile [.VMSPORT]LIGHTTPD_SIGNAL.C 'objdir'LIGHTTPD_SIGNAL.OBJ
 $ if errors .gt. 0
 $ then
 $   write sys$error "BUILD: ''errors' compile failure(s)"
@@ -110,6 +112,7 @@ $ goto opt_loop
 $opt_end:
 $ write o objdir, "VMS_CRTL_INIT.OBJ"
 $ write o objdir, "VMS_IN6ADDR.OBJ"
+$ write o objdir, "VMS_PRIVS.OBJ"
 $ write o "ZLIB$ROOT:[LIB]LIBZ.OLB/LIBRARY"
 $ write o "PCRE2$ROOT:[LIB]PCRE2-8.OLB/LIBRARY"
 $ write o "SYS$SHARE:SSL3$LIBSSL_SHR32/SHAREABLE"
@@ -117,6 +120,10 @@ $ write o "SYS$SHARE:SSL3$LIBCRYPTO_SHR32/SHAREABLE"
 $ close o
 $ write sys$output "BUILD: link ''objdir'LIGHTTPD.EXE"
 $ link/executable='objdir'LIGHTTPD.EXE/map='objdir'LIGHTTPD.MAP/full 'opt'/options
+$ if .not. $status then goto done
+$! LIGHTTPD_SIGNAL.EXE: sends TERM/HUP to the server (DCL cannot send C RTL signals)
+$ write sys$output "BUILD: link ''objdir'LIGHTTPD_SIGNAL.EXE"
+$ link/executable='objdir'LIGHTTPD_SIGNAL.EXE 'objdir'LIGHTTPD_SIGNAL.OBJ
 $ if .not. $status then goto done
 $ status = 1
 $ write sys$output "BUILD: done"

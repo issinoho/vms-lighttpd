@@ -1,0 +1,25 @@
+=product @PRODUCER@ @BASE@ LIGHTTPD @PCSIVERSION@ full
+1 'PRODUCER
+=prompt @PRODUCER@
+1 'PRODUCT
+=prompt lighttpd @VERSION@ for OpenVMS (vms-lighttpd)
+1 'NOTICE
+=prompt lighttpd is distributed under the revised BSD licence.
+1 RELEASE_NOTES
+=prompt Documentation is in [VMSLIGHTTPD.DOC]README.VMS under the installation directory.
+1 POST_INSTALL
+=prompt Post-installation tasks for lighttpd (vms-lighttpd)
+    Once, as SYSTEM: create the service account, data directory and site
+    settings (SYS$MANAGER:VMSLIGHTTPD$CONFIG.COM):
+    $ @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONFIGURE
+    Start and stop:
+    $ @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONTROL START
+    $ @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONTROL STOP
+    At boot, add to SYS$MANAGER:SYSTARTUP_VMS.COM (after TCP/IP and SSL3):
+    $ @SYS$STARTUP:VMSLIGHTTPD$STARTUP.COM
+    At shutdown, add to SYS$MANAGER:SYSHUTDWN.COM:
+    $ @SYS$STARTUP:VMSLIGHTTPD$SHUTDOWN.COM
+
+PRODUCT REMOVE LIGHTTPD stops the service, removes the installed image and
+deassigns VMSLIGHTTPD$ROOT; the data directory, the account and the site
+settings are kept.
