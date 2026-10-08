@@ -107,8 +107,8 @@ $   open/read/share=write elog 'logs'error.log
 $   n = 0
 $tail_read:
 $   read/end=tail_show elog line
-$   n = n + 1
 $   tail_'f$string(n - (n / 5) * 5)' = line
+$   n = n + 1
 $   goto tail_read
 $tail_show:
 $   close elog
