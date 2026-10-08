@@ -1,24 +1,65 @@
 # vms-lighttpd
 
-A port of [lighttpd](https://www.lighttpd.net/) 1.4 to OpenVMS (x86-64 and IA64),
-built natively with VSI C against VSI's SSL3 (OpenSSL 3.0). It is meant as a light, modern
-alternative to VSI's Apache for HTTPS and PHP sites. The acceptance test is phpBB 3.3.x on
-VSI PHP over FastCGI.
+A port of [lighttpd](https://www.lighttpd.net/) 1.4 to OpenVMS (x86-64 and IA64): a light,
+fast web server, built natively with VSI C, with HTTPS and HTTP/2 through VSI's OpenSSL 3.0
+kit (SSL3) and PHP as a pool of persistent FastCGI processes. It is meant as a modern
+alternative to VSI's Apache; [phpBB](https://www.phpbb.com/) 3.3 runs on it with PHP 8.1 and
+[vms-mariadb](https://github.com/issinoho/vms-mariadb).
 
-**Status:** all five phases done on x86-64 and IA64: lighttpd 1.4.85 serves static files,
-HTTPS (TLS 1.3/1.2, HTTP/2) and PHP over FastCGI; phpBB 3.3.19 runs on it with PHP 8.1 and
-vms-mariadb; PCSI kits (product LIGHTTPD V1.4-85E1) install a service that runs under its
-own account and drops privileges after binding.  See docs/PHASE0-5.md.
+**Status:** lighttpd **1.4.85**, kit **LIGHTTPD V1.4-85E1** (preview) for x86-64 and IA64.
+Static files, HTTPS (TLS 1.3, and 1.2 when enabled), HTTP/2, PHP over FastCGI, phpBB, and a
+service that runs under its own account and drops its privileges after binding: all tested on
+both architectures (see `docs/PHASE0.md` ... `docs/PHASE5.md`).
 
-This repository stores only the VMS delta over the signed upstream release, the same way as
-its siblings ([vms-curl](https://github.com/issinoho/vms-curl),
-[vms-mariadb](https://github.com/issinoho/vms-mariadb), ...):
+## Installing
+
+Requirements: VSI TCP/IP Services and VSI SSL3 (OpenSSL 3.0); for PHP, a PHP kit with
+`PHP_CGI.EXE` under a rooted logical name (default `PHP_ROOT`), readable and executable by the
+service account.
+
+```
+$ PRODUCT INSTALL LIGHTTPD /SOURCE=dev:[dir]
+$ @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONFIGURE        ! once, as SYSTEM
+$ @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONTROL START    ! also STOP, RESTART, STATUS, ROTATE
+```
+
+`VMSLIGHTTPD$CONFIGURE` creates the service account (default `LIGHTTPD`: batch access only,
+`TMPMBX,NETMBX`, quotas for a network server), a data directory (CONF, LOGS, HTDOCS, PHP, TMP),
+`LIGHTTPD.CONF` and the PHP pool's `PHP.INI` from templates, and the site settings in
+`SYS$MANAGER:VMSLIGHTTPD$CONFIG.COM`. For boot and shutdown add
+`@SYS$STARTUP:VMSLIGHTTPD$STARTUP` to `SYSTARTUP_VMS.COM` and
+`@SYS$STARTUP:VMSLIGHTTPD$SHUTDOWN` to `SYSHUTDWN.COM`. `PRODUCT REMOVE LIGHTTPD` keeps the
+account, data and settings. The kit's `[VMSLIGHTTPD.DOC]README.VMS` has the details.
+
+## Notes for OpenVMS
+
+- **Ports below 1024** need SYSPRV, OPER or BYPASS on VMS. `LIGHTTPD.EXE` is installed with
+  `/PRIVILEGED=OPER`; once its listeners are bound it disables every privilege but
+  `TMPMBX,NETMBX`, checks that, and stops if anything else is left.
+- **Stop and log rotation** use C RTL signals (`LIGHTTPD_SIGNAL.EXE`): SIGTERM for a graceful
+  stop, SIGHUP after `ROTATE` has made new log file versions.
+- **Configuration paths are UNIX form**, and includes must be absolute.
+- **Content should be Stream_LF.** Other record formats (variable, fixed, VFC) are sent by their
+  converted bytes up to 32 MB, with a warning to `CONVERT` them.
+- **Connections** are limited by the account's FILLM and BYTLM quotas, which the configure
+  procedure sets.
+- **PHP** runs as `PHP_POOL.COM`'s detached `LTPHP_<port>` processes (`PHP_CGI.EXE -b`);
+  lighttpd does not start processes itself (no mod_cgi or FastCGI `bin-path` on VMS).
+
+## How this repository works
+
+It stores only the VMS delta over the signed upstream release, the same way as its siblings
+([vms-curl](https://github.com/issinoho/vms-curl), [vms-mariadb](https://github.com/issinoho/vms-mariadb), ...):
 
 - `upstream.conf`: the pinned release, its SHA-256 and signing key (`keys/`)
-- `patches/`: changes to upstream files, applied in `patches/series` order
-- `overlay/`: files we add (VMS build procedures, config header, DCL wrappers)
-- `tools/`: host-side scripts that prepare the tree and drive the VMS nodes over SSH
+- `patches/`: 14 changes to upstream files, applied in `patches/series` order, each with its
+  VMS reason
+- `overlay/`: files we add (config header, build procedure, VMS helpers, service procedures, kit)
+- `tools/`: host-side scripts: `prepare.sh`, `build.sh`, `kit.sh`, tests (`test_http.sh`,
+  `test_php.sh`, `test_phpbb.py`, `soak.sh`), `installcheck.sh`, and `vms.sh` for the nodes
 - `probes/`: small C programs that pin down platform behaviour
-- `docs/`: decisions, porting log, Phase 0 results
+- `docs/`: the plan, decisions (`DECISIONS.md`), the porting log and the results of each phase
 
-See `LIGHTTPD_OPENVMS_PLAN.md` for the plan and `docs/DECISIONS.md` for why lighttpd.
+Home page for all the ports: [openvms.issinoho.com](https://openvms.issinoho.com).
+
+lighttpd is distributed under the revised BSD licence (`COPYING` in the kit).
