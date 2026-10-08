@@ -6,7 +6,7 @@
 # rotate the logs, stop it; with CLEANUP, remove the product, account and data.
 #
 # CHANGES THE SYSTEM: ask the user first.  Runs as a batch job on the node.
-set -euo pipefail
+set -uo pipefail   # not -e: the checks below decide
 top=$(cd "$(dirname "$0")/.." && pwd)
 node=${1:?usage: installcheck.sh <node> <uic> <data-dir> [port] [CLEANUP]}
 uic=${2:?uic, e.g. [361,1]}

@@ -35,7 +35,8 @@ $ then
 $   say "VMSLIGHTTPD$STARTUP: no VMSLIGHTTPD$ROOT:[BIN]LIGHTTPD.EXE (root ", root, ")"
 $   exit 44
 $ endif
-$ install = "$SYS$SYSTEM:INSTALL"
+$! the DCL INSTALL verb (through a "$SYS$SYSTEM:INSTALL" symbol the file spec
+$! was mis-parsed: %CLI-W-MAXPARM, and the image was not installed)
 $ define/user sys$output nla0:
 $ define/user sys$error nla0:
 $ install list VMSLIGHTTPD$ROOT:[BIN]LIGHTTPD.EXE
@@ -45,6 +46,8 @@ $   install replace VMSLIGHTTPD$ROOT:[BIN]LIGHTTPD.EXE /open/header_resident/sha
 $ else
 $   install add VMSLIGHTTPD$ROOT:[BIN]LIGHTTPD.EXE /open/header_resident/shared/privileged=(oper)
 $ endif
+$ install list VMSLIGHTTPD$ROOT:[BIN]LIGHTTPD.EXE
+$ if .not. $status then write sys$error "VMSLIGHTTPD$STARTUP: LIGHTTPD.EXE is not installed"
 $ if op .eqs. "INSTALL" then exit 1
 $!
 $! boot: start if the site settings ask for it on this node
@@ -61,7 +64,6 @@ $ if f$trnlnm("VMSLIGHTTPD$ROOT") .nes. ""
 $ then
 $   if f$search("VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONTROL.COM") .nes. "" then -
        @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONTROL STOP
-$   install = "$SYS$SYSTEM:INSTALL"
 $   define/user sys$output nla0:
 $   define/user sys$error nla0:
 $   install remove VMSLIGHTTPD$ROOT:[BIN]LIGHTTPD.EXE
