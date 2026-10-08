@@ -49,6 +49,10 @@ $ if n .lt. 4 then goto fcgi_loop
 $ write f "  ) )"
 $! absolute: lighttpd takes include paths relative to the -f file's directory,
 $! which it cannot work out from a VMS file spec such as [.T4]LIGHTTPD.CONF
+$! the including config sets these; phpbb.conf relies on it (a key may be
+$! assigned only once per scope)
+$ write f "index-file.names = ( ""index.php"", ""index.html"" )"
+$ write f "static-file.exclude-extensions = ( "".php"", "".inc"" )"
 $ write f "include """, ut4, "/phpbb.conf"""
 $ write f "$SERVER[""socket""] == """, bind, ":18443"" {"
 $ write f "  ssl.engine  = ""enable"""
