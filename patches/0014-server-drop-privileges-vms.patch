@@ -7,28 +7,32 @@ installs LIGHTTPD.EXE with /PRIVILEGED=OPER and runs it under an account
 with only TMPMBX and NETMBX (docs/DECISIONS.md D12).
 
 Right after network_init() has bound the listeners, disable every privilege
-for the rest of the process's life and keep TMPMBX and NETMBX
-(vmsport/vms_privs.c).  Logged, so the error log shows the drop happened;
-a failure stops the server rather than leaving it privileged.
+in both the current (installed-image) and permanent masks and keep TMPMBX
+and NETMBX (vmsport/vms_privs.c), then check the result with $GETJPI.  The
+error log records the privilege mask actually left; if anything beyond
+TMPMBX,NETMBX remains, the server stops rather than run privileged.
 
 --- a/src/server.c
 +++ b/src/server.c
-@@ -1801,6 +1801,20 @@
+@@ -1801,6 +1801,23 @@
  		return -1;
  	}
  	srv->stdin_fd = -1;
 +  #ifdef __VMS
 +	/* ports < 1024 needed OPER (installed-image privilege): drop it */
 +	{
-+		extern unsigned int vms_drop_privileges(void);
-+		const unsigned int vst = vms_drop_privileges();
++		extern unsigned int vms_drop_privileges(unsigned int cur[2]);
++		unsigned int cur[2];
++		const unsigned int vst = vms_drop_privileges(cur);
 +		if (0 != vst) {
 +			log_error(srv->errh, __FILE__, __LINE__,
-+			  "VMS: could not drop privileges (status %%X%08X)", vst);
++			  "VMS: could not drop privileges (status %%X%08X, mask %08X%08X); stopping",
++			  vst, cur[1], cur[0]);
 +			return -1;
 +		}
 +		log_error(srv->errh, __FILE__, __LINE__,
-+		  "VMS: listeners bound; privileges now TMPMBX,NETMBX");
++		  "VMS: listeners bound; privileges now TMPMBX,NETMBX (mask %08X%08X)",
++		  cur[1], cur[0]);
 +	}
 +  #endif
  

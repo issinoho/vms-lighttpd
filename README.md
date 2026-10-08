@@ -5,8 +5,10 @@ built natively with VSI C against VSI's SSL3 (OpenSSL 3.0). It is meant as a lig
 alternative to VSI's Apache for HTTPS and PHP sites. The acceptance test is phpBB 3.3.x on
 VSI PHP over FastCGI.
 
-**Status:** Phase 1 done: `LIGHTTPD.EXE` builds and links on x86-64 and IA64 and checks a
-configuration (`-tt`). Serving (Phase 2) is next.
+**Status:** all five phases done on x86-64 and IA64: lighttpd 1.4.85 serves static files,
+HTTPS (TLS 1.3/1.2, HTTP/2) and PHP over FastCGI; phpBB 3.3.19 runs on it with PHP 8.1 and
+vms-mariadb; PCSI kits (product LIGHTTPD V1.4-85E1) install a service that runs under its
+own account and drops privileges after binding.  See docs/PHASE0-5.md.
 
 This repository stores only the VMS delta over the signed upstream release, the same way as
 its siblings ([vms-curl](https://github.com/issinoho/vms-curl),

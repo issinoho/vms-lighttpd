@@ -119,7 +119,9 @@ $ write o "SYS$SHARE:SSL3$LIBSSL_SHR32/SHAREABLE"
 $ write o "SYS$SHARE:SSL3$LIBCRYPTO_SHR32/SHAREABLE"
 $ close o
 $ write sys$output "BUILD: link ''objdir'LIGHTTPD.EXE"
-$ link/executable='objdir'LIGHTTPD.EXE/map='objdir'LIGHTTPD.MAP/full 'opt'/options
+$! /NOTRACEBACK: the kit installs LIGHTTPD.EXE /PRIVILEGED=OPER, and INSTALL
+$! refuses a privileged image linked with traceback (INSTALL-E-IMGTRACED)
+$ link/notraceback/executable='objdir'LIGHTTPD.EXE/map='objdir'LIGHTTPD.MAP/full 'opt'/options
 $ if .not. $status then goto done
 $! LIGHTTPD_SIGNAL.EXE: sends TERM/HUP to the server (DCL cannot send C RTL signals)
 $ write sys$output "BUILD: link ''objdir'LIGHTTPD_SIGNAL.EXE"
