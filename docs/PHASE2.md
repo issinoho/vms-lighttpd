@@ -22,6 +22,29 @@ ALPN, 2 MB over HTTPS h2, TLS 1.3 ticket resumption, TLS 1.2 resumption.
 
 Throughput is limited by the nodes' TCP/IP (~50-130 KB/s per connection, D10), not lighttpd.
 
+## TLS scan (testssl.sh 3.2.4, x86, 2026-10-16)
+
+Both HTTPS listeners of the test server, rebuilt from clean that day (logs in
+`out/testssl-x86-1844[34].{log,json}`): 18443 (lighttpd's default, TLS 1.3 only) and 18444
+(`MinProtocol` TLSv1.2, as the kit template's commented-out line offers).
+
+| | 18443 | 18444 |
+|---|---|---|
+| protocols | TLS 1.3 only | TLS 1.2, 1.3; SSLv2/3, TLS 1.0/1.1 not offered |
+| ciphers | AEAD with forward secrecy only; no NULL/export/RC4/3DES/CBC | same |
+| curves | X25519, X448, P-256, P-384 | same |
+| vulnerabilities (Heartbleed ... RC4, 17 checks) | none | none |
+| ALPN | h2, http/1.1 | h2, http/1.1 |
+| client simulations | modern clients connect; IE 11, Android 7-8, Apple Mail 16, Java 7, OpenSSL 1.0.2 do not (no TLS 1.2) | all but IE 8 and Java 7 |
+| HIGH/CRITICAL | certificate only | certificate only |
+
+All HIGH and CRITICAL findings are about the throwaway 30-day self-signed test certificate
+(self-signed chain, no SAN, name mismatch, no CRL/OCSP, expiry < 30 days), and they cap
+the grade at T. None is about lighttpd or OpenSSL. A CA-issued certificate removes them;
+that check is done on the live service, not here. Lower findings: no HSTS and no security
+headers (MEDIUM/LOW; set with `setenv.add-response-header` per site), and no post-quantum
+KEMs (LOW; SSL3 is OpenSSL 3.0, and ML-KEM needs 3.5).
+
 ## Notes
 
 - `lighttpd -V` prints its feature list (poll, writev/write, mmap, IPv6, zlib, OpenSSL, PCRE)
