@@ -223,3 +223,30 @@ is the read-only diagnosis (settings, NICs, `netstat -s`).
 - **PCSI product name `LIGHTTPD`**: `VMSLIGHTTPD` makes a 40-character kit name and PCSI
   allows 39; VSI ships no lighttpd. Logical names, directories and procedures keep the
   `VMSLIGHTTPD` prefix. Kit version V1.4-85E1.
+
+## D13. PHP for OpenVMS (vms-php, PHP 8.5) as the pool's PHP
+
+**Status:** approved by the user (2026-10-18, release vms3).
+
+The live board moved from VSI's PHP 8.1 kit (`PHP_ROOT`) to PHP for OpenVMS 8.5
+(vms-php, product VMSPHP, `VMSPHP$ROOT`) on 2026-10-17. That PHP needs a different pool
+`PHP.INI`:
+- opcache is built in, so no `zend_extension` or `extension_dir`;
+- `opcache.file_cache` in the pool directory's `[.OPCACHE]`, owned by the service account
+  (vms-php #61: PHP checks it with `access()`, which ignores ACLs);
+- `openssl.capath = "VMSPHP$ROOT:[ETC.CERTS]"`, the kit's CA certificates;
+- `mysqli.default_host = 127.0.0.1`.
+
+So in `vms3`:
+- the kit adds the template `[CONF]PHP-VMSPHP.INI`;
+- `VMSLIGHTTPD$CONFIGURE` picks it when the PHP root holds vms-php's `[ETC]PHP-POOL.INI-DIST`,
+  creates `[PHP.OPCACHE]` with the data tree, and offers `VMSPHP$ROOT` as the default PHP root
+  when it is defined;
+- `PHP_POOL.COM` creates `[.OPCACHE]` with the pool's other directories.
+
+The 8.1 and 8.0 templates are unchanged.
+
+Alternatives considered:
+- One template with commented lines for each PHP: the site would have to edit it by hand,
+  where configure can choose.
+- Asking which PHP: the PHP root already says which kit it is.

@@ -45,7 +45,7 @@ $ if f$search("''out'*.PCSI;*") .nes. "" then delete/nolog 'out'*.PCSI;*
 $ if f$search("''mat'*.*;*") .nes. "" then delete/nolog 'mat'*.*;*
 $ copy/nolog 'bin'LIGHTTPD.EXE,LIGHTTPD_SIGNAL.EXE 'mat'
 $ copy/nolog [.VMSPORT.KIT]VMSLIGHTTPD$*.COM,PHP_POOL.COM 'mat'
-$ copy/nolog [.VMSPORT.KIT]LIGHTTPD.CONF,MIME.CONF,PHPBB.CONF,PHP.INI,PHP-VSI80.INI 'mat'
+$ copy/nolog [.VMSPORT.KIT]LIGHTTPD.CONF,MIME.CONF,PHPBB.CONF,PHP.INI,PHP-VSI80.INI,PHP-VMSPHP.INI 'mat'
 $ copy/nolog [.VMSPORT.KIT]README.VMS,COPYING.,NEWS. 'mat'
 $ matspec = f$parse(mat,,,"DEVICE","NO_CONCEAL") + f$parse(mat,,,"DIRECTORY","NO_CONCEAL")
 $!

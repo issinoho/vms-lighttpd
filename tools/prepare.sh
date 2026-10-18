@@ -88,6 +88,7 @@ subst "" "IA64 and x86-64" < "$kit/readme.vms" > "$kit/README.VMS"; rm -f "$kit/
 cp "$stage/vmsport/php/php_pool.com" "$kit/PHP_POOL.COM"
 cp "$stage/vmsport/php/php.ini" "$kit/PHP.INI"
 cp "$stage/vmsport/php/php-vsi80.ini" "$kit/PHP-VSI80.INI"
+cp "$stage/vmsport/php/php-vmsphp.ini" "$kit/PHP-VMSPHP.INI"
 cp "$stage/vmsport/conf/phpbb.conf" "$kit/PHPBB.CONF"
 cp "$stage/doc/config/conf.d/mime.conf" "$kit/MIME.CONF"
 cp "$stage/COPYING" "$kit/COPYING."

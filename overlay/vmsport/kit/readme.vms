@@ -3,13 +3,14 @@ lighttpd @VERSION@ for OpenVMS (vms-lighttpd @KITVERSION@, @ARCH@)
 
 lighttpd is a light, fast web server (https://www.lighttpd.net/).  This kit
 is a native OpenVMS build with VSI C, using VSI's SSL3 (OpenSSL 3.0) for
-HTTPS and HTTP/2, and runs PHP (VSI's PHP kits, or the PHP 8.1 kit) as a
-pool of persistent FastCGI processes.  Source, patches and test results:
+HTTPS and HTTP/2, and runs PHP (PHP for OpenVMS 8.5, VSI's PHP kits, or the
+PHP 8.1 kit) as a pool of persistent FastCGI processes.  Source, patches and test results:
 https://github.com/issinoho/vms-lighttpd
 
 Requirements: VSI TCP/IP Services, VSI SSL3 (OpenSSL 3.0); for PHP, a PHP kit
 with PHP_CGI.EXE ([BIN]PHP_CGI.EXE or [CSWS]PHP-CGI.EXE) under a rooted
-logical name (default PHP_ROOT).
+logical name: VMSPHP$ROOT for PHP for OpenVMS (https://github.com/issinoho/
+vms-php, product VMSPHP), else PHP_ROOT.
 
 Installed files (VMSLIGHTTPD$ROOT, defined by VMSLIGHTTPD$STARTUP)
 -----------------------------------------------------------------
@@ -21,6 +22,7 @@ Installed files (VMSLIGHTTPD$ROOT, defined by VMSLIGHTTPD$STARTUP)
   [COM]VMSLIGHTTPD$SERVER.COM      the server process
   [COM]PHP_POOL.COM          the PHP FastCGI pool
   [CONF]                     templates: LIGHTTPD.CONF, MIME.CONF, PHPBB.CONF,
+                             PHP-VMSPHP.INI (PHP for OpenVMS 8.5),
                              PHP.INI (PHP 8.1 kit), PHP-VSI80.INI (VSI's 8.0 kit)
   SYS$STARTUP:VMSLIGHTTPD$STARTUP.COM, VMSLIGHTTPD$SHUTDOWN.COM
 
@@ -34,9 +36,10 @@ asks for (or takes as parameters) the service account (default LIGHTTPD) and
 its UIC, a data directory, the HTTP port (default 80), whether to start at
 boot, and whether to run the PHP pool.  It creates the account (batch access
 only; privileges TMPMBX,NETMBX; quotas for a network server), the data tree
-(CONF, LOGS, HTDOCS, PHP, TMP, owned by the account), writes
-CONF:LIGHTTPD.CONF and PHP:PHP.INI from the templates (existing files are
-kept), and the site settings in SYS$MANAGER:VMSLIGHTTPD$CONFIG.COM.
+(CONF, LOGS, HTDOCS, PHP, TMP, and PHP's LOGS, SESSIONS, TMP, OPCACHE, all
+owned by the account), writes CONF:LIGHTTPD.CONF and PHP:PHP.INI from the
+templates (existing files are kept; the PHP template matches the PHP kit
+found), and the site settings in SYS$MANAGER:VMSLIGHTTPD$CONFIG.COM.
 
     $ @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$CONTROL START | STOP | RESTART | STATUS | ROTATE
 

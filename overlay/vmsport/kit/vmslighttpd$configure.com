@@ -9,7 +9,8 @@ $!              SYS$SYSDEVICE:[VMSLIGHTTPD_DATA])
 $!   port       HTTP port (default 80)
 $!   autostart  YES: VMSLIGHTTPD$STARTUP starts the server at boot (default NO)
 $!   php        YES: run the PHP FastCGI pool (default YES if php-root is defined)
-$!   php-root   rooted logical of the PHP install (default PHP_ROOT)
+$!   php-root   rooted logical of the PHP install (default VMSPHP$ROOT when
+$!              PHP for OpenVMS is installed, else PHP_ROOT)
 $! Missing values are asked for when run interactively.
 $!
 $! What it does (docs/DECISIONS.md D12):
@@ -40,7 +41,10 @@ $ call ask account "Service account" "LIGHTTPD" 'p1'
 $ call ask datadir "Data directory" "SYS$SYSDEVICE:[VMSLIGHTTPD_DATA]" 'p3'
 $ call ask port "HTTP port" "80" 'p4'
 $ call ask autostart "Start at boot (YES/NO)" "NO" 'p5'
-$ call ask phproot "PHP install (rooted logical)" "PHP_ROOT" 'p7'
+$! PHP for OpenVMS (vms-php, VMSPHP$ROOT) if installed, else the PHP_ROOT kits
+$ phprootdefault = "PHP_ROOT"
+$ if f$trnlnm("VMSPHP$ROOT") .nes. "" then phprootdefault = "VMSPHP$ROOT"
+$ call ask phproot "PHP install (rooted logical)" 'phprootdefault' 'p7'
 $ phpdefault = "NO"
 $ if f$trnlnm(phproot) .nes. "" then phpdefault = "YES"
 $ call ask php "Run the PHP FastCGI pool (YES/NO)" 'phpdefault' 'p6'
@@ -98,7 +102,7 @@ $ top = base - "]"
 $ prot = "(S:RWE,O:RWE,G,W)"
 $ i = 0
 $dir_loop:
-$ sub = f$element(i, ",", ",CONF,LOGS,HTDOCS,TMP,PHP,PHP.LOGS,PHP.SESSIONS,PHP.TMP")
+$ sub = f$element(i, ",", ",CONF,LOGS,HTDOCS,TMP,PHP,PHP.LOGS,PHP.SESSIONS,PHP.TMP,PHP.OPCACHE")
 $ if sub .eqs. "," then goto dir_done
 $ i = i + 1
 $ d = top + "]"
@@ -149,6 +153,8 @@ $ if php .eqs. "YES" .and. f$search(phpd + "PHP.INI") .eqs. ""
 $ then
 $   ini = "VMSLIGHTTPD$ROOT:[CONF]PHP.INI"
 $   if f$search(phproot + ":[BIN]PHP_CGI.EXE") .eqs. "" then ini = "VMSLIGHTTPD$ROOT:[CONF]PHP-VSI80.INI"
+$!  PHP for OpenVMS (vms-php): opcache built in, a file cache, its CA certificates
+$   if f$search(phproot + ":[ETC]PHP-POOL.INI-DIST") .nes. "" then ini = "VMSLIGHTTPD$ROOT:[CONF]PHP-VMSPHP.INI"
 $   call template 'ini' 'phpd'PHP.INI
 $   say "VMSLIGHTTPD$CONFIGURE: wrote ", phpd, "PHP.INI from ", ini
 $ endif

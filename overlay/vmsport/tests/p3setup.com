@@ -5,6 +5,7 @@ $!   [.T3POOL]PHP.INI   from [.VMSPORT.PHP]PHP.INI with @POOL@ filled in
 $!   [.T2]LIGHTTPD.CONF Phase 2 config + mod_fastcgi, 4 backends on P3..P3+3
 $! P1: bind address (default 0.0.0.0)
 $! P2: PHP root logical name (default PHP_ROOT); its kit decides the template:
+$!     [ETC]PHP-POOL.INI-DIST (PHP for OpenVMS) -> PHP-VMSPHP.INI,
 $!     [BIN]PHP_CGI.EXE (PHP 8.1 kit) -> PHP.INI, else PHP-VSI80.INI
 $! P3: the pool's first port (default 19100; tools/serve.sh POOL_BASE)
 $ set noon
@@ -36,6 +37,8 @@ $ root = p2
 $ if root .eqs. "" then root = "PHP_ROOT"
 $ template = "[.VMSPORT.PHP]PHP.INI"
 $ if f$search(root + ":[BIN]PHP_CGI.EXE") .eqs. "" then template = "[.VMSPORT.PHP]PHP-VSI80.INI"
+$! PHP for OpenVMS (vms-php, D13)
+$ if f$search(root + ":[ETC]PHP-POOL.INI-DIST") .nes. "" then template = "[.VMSPORT.PHP]PHP-VMSPHP.INI"
 $ say "P3SETUP: ", root, " -> ", template
 $ open/read  in  'template'
 $ open/write out [.T3POOL]PHP.TMP

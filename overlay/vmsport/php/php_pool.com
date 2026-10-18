@@ -70,6 +70,8 @@ $   exit 44
 $ endif
 $ if f$search(pooldir + "]LOGS.DIR") .eqs. "" then create/directory 'logs'
 $ if f$search(pooldir + "]SESSIONS.DIR") .eqs. "" then create/directory 'pooldir'.SESSIONS]
+$! opcache.file_cache of PHP for OpenVMS (PHP-VMSPHP.INI)
+$ if f$search(pooldir + "]OPCACHE.DIR") .eqs. "" then create/directory 'pooldir'.OPCACHE]
 $ if f$search(pooldir + "]TMP.DIR") .eqs. "" then create/directory 'pooldir'.TMP]
 $ if f$search(stopfile) .nes. "" then delete/nolog 'stopfile';*
 $ gosub unixpath

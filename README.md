@@ -7,10 +7,11 @@
 A port of [lighttpd](https://www.lighttpd.net/) 1.4 to OpenVMS (x86-64 and IA64): a light,
 fast web server, built natively with VSI C, with HTTPS and HTTP/2 through VSI's OpenSSL 3.0
 kit (SSL3) and PHP as a pool of persistent FastCGI processes. It is meant as a modern
-alternative to VSI's Apache; [phpBB](https://www.phpbb.com/) 3.3 runs on it with PHP 8.1 and
+alternative to VSI's Apache; [phpBB](https://www.phpbb.com/) 3.3 runs on it with
+[PHP 8.5 for OpenVMS](https://github.com/issinoho/vms-php) (or VSI's PHP 8.1) and
 [vms-mariadb](https://github.com/issinoho/vms-mariadb).
 
-**Status:** lighttpd **1.4.85**, kit **LIGHTTPD V1.4-85E2** (preview) for x86-64 and IA64.
+**Status:** lighttpd **1.4.85**, kit **LIGHTTPD V1.4-85E3** for x86-64 and IA64.
 Static files, HTTPS (TLS 1.3, and 1.2 when enabled), HTTP/2, PHP over FastCGI, phpBB, and a
 service that runs under its own account and drops its privileges after binding: all tested on
 both architectures (see `docs/PHASE0.md` ... `docs/PHASE5.md`).
@@ -18,8 +19,8 @@ both architectures (see `docs/PHASE0.md` ... `docs/PHASE5.md`).
 ## Installing
 
 Requirements: VSI TCP/IP Services and VSI SSL3 (OpenSSL 3.0); for PHP, a PHP kit with
-`PHP_CGI.EXE` under a rooted logical name (default `PHP_ROOT`), readable and executable by the
-service account.
+`PHP_CGI.EXE` under a rooted logical name (`VMSPHP$ROOT` for PHP for OpenVMS, else
+`PHP_ROOT`), readable and executable by the service account.
 
 ```
 $ PRODUCT INSTALL LIGHTTPD /SOURCE=dev:[dir]
