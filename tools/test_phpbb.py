@@ -6,6 +6,9 @@ posts a topic, replies with an attachment, downloads it back, searches for the
 topic, opens the ACP (re-authentication), checks access-denied paths, and logs
 out.  One PASS/FAIL line per check; exit status 1 if any failed.  Standard
 library only.  Registration is not tested: phpBB's default CAPTCHA blocks it.
+Another board (e.g. vms-php's SQLite board): PHPBB_URL (default
+http://<host>:18080) and PHPBB_SECRETS (a file with PHPBB_ADMIN_PASSWORD=...,
+default cache/db.secrets).
 """
 import hashlib, http.cookiejar, os, re, sys, time, urllib.parse, urllib.request, uuid
 
@@ -13,8 +16,9 @@ top = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 node = sys.argv[1] if len(sys.argv) > 1 else "x86"
 host = next(l.split()[2] for l in open(os.path.join(top, "tools/nodes.conf"))
             if l.split() and l.split()[0] == node)
-secrets = dict(l.strip().split("=", 1) for l in open(os.path.join(top, "cache/db.secrets")) if "=" in l)
-BASE = f"http://{host}:18080"
+secrets = dict(l.strip().split("=", 1)
+               for l in open(os.environ.get("PHPBB_SECRETS", os.path.join(top, "cache/db.secrets"))) if "=" in l)
+BASE = os.environ.get("PHPBB_URL", f"http://{host}:18080")
 ADMIN, PASSWORD = "admin", secrets["PHPBB_ADMIN_PASSWORD"]
 jar = http.cookiejar.CookieJar()
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar))

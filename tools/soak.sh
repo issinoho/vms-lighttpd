@@ -8,38 +8,44 @@
 # Results: out/soak-<node>.log (samples) and a summary of status codes.
 # The nodes' TCP/IP gives ~100 KB/s per connection (docs/DECISIONS.md D10),
 # so the mix is small requests.
+# Another server (e.g. vms-php's SQLite board): SOAK_PORT (default 18080),
+# SOAK_TLS_PORT (default 18443; empty: no HTTPS requests in the phpBB mix) and
+# SOAK_ENTRY (the server's batch entry file, default cache/serve-<node>.entry).
 set -uo pipefail
 top=$(cd "$(dirname "$0")/.." && pwd)
 node=${1:?usage: soak.sh <node> [minutes] [workers]}
 minutes=${2:-60}
 workers=${3:-8}
 read -r _ _ HOST _ < <(awk -v n="$node" '$1==n' "$top/tools/nodes.conf")
-entry=$(cat "$top/cache/serve-$node.entry" 2>/dev/null) || { echo "soak: server not started (tools/serve.sh)" >&2; exit 1; }
+port=${SOAK_PORT:-18080}
+tlsport=${SOAK_TLS_PORT-18443}
+entry=$(cat "${SOAK_ENTRY:-$top/cache/serve-$node.entry}" 2>/dev/null) || { echo "soak: server not started (tools/serve.sh)" >&2; exit 1; }
 out=$top/out/soak-$node.log
 res=$top/cache/soak-$node.results
 mkdir -p "$top/out"; : > "$res"
 end=$(( $(date +%s) + minutes * 60 ))
 
 worker() {
-    local urls=("http://$HOST:18080/" "http://$HOST:18080/plain.txt" "http://$HOST:18080/var.txt"
-                "http://$HOST:18080/sub/" "http://$HOST:18080/nope.html" "https://$HOST:18443/index.html"
-                "range" "https://$HOST:18443/plain.txt")
+    local urls=("http://$HOST:$port/" "http://$HOST:$port/plain.txt" "http://$HOST:$port/var.txt"
+                "http://$HOST:$port/sub/" "http://$HOST:$port/nope.html" "https://$HOST:$tlsport/index.html"
+                "range" "https://$HOST:$tlsport/plain.txt")
     # SOAK_PHP=1: Phase 3 mix, mostly PHP through the FastCGI pool
-    [ "${SOAK_PHP:-0}" = 1 ] && urls=("http://$HOST:18080/info.php" "http://$HOST:18080/env.php/a/b?x=1"
-                "http://$HOST:18080/pid.php" "http://$HOST:18080/session.php" "post"
-                "https://$HOST:18443/info.php" "http://$HOST:18080/big.php?n=32768" "http://$HOST:18080/plain.txt")
+    [ "${SOAK_PHP:-0}" = 1 ] && urls=("http://$HOST:$port/info.php" "http://$HOST:$port/env.php/a/b?x=1"
+                "http://$HOST:$port/pid.php" "http://$HOST:$port/session.php" "post"
+                "https://$HOST:$tlsport/info.php" "http://$HOST:$port/big.php?n=32768" "http://$HOST:$port/plain.txt")
     # SOAK_PHPBB=1: Phase 4 server (CONF=[.T4]LIGHTTPD.CONF), guest pages of the
     # test board: index, forum, topic, search, login form, FAQ, member list
-    [ "${SOAK_PHPBB:-0}" = 1 ] && urls=("http://$HOST:18080/" "http://$HOST:18080/viewforum.php?f=2"
-                "http://$HOST:18080/viewtopic.php?t=1" "http://$HOST:18080/search.php?keywords=welcome"
-                "http://$HOST:18080/ucp.php?mode=login" "http://$HOST:18080/app.php/help/faq"
-                "http://$HOST:18080/memberlist.php" "https://$HOST:18443/viewtopic.php?t=1")
+    [ "${SOAK_PHPBB:-0}" = 1 ] && urls=("http://$HOST:$port/" "http://$HOST:$port/viewforum.php?f=2"
+                "http://$HOST:$port/viewtopic.php?t=1" "http://$HOST:$port/search.php?keywords=welcome"
+                "http://$HOST:$port/ucp.php?mode=login" "http://$HOST:$port/app.php/help/faq"
+                "http://$HOST:$port/memberlist.php" "https://$HOST:$tlsport/viewtopic.php?t=1")
+    [ "${SOAK_PHPBB:-0}" = 1 ] && [ -z "$tlsport" ] && unset 'urls[7]'
     while [ "$(date +%s)" -lt "$end" ]; do
         u=${urls[$((RANDOM % ${#urls[@]}))]}
         if [ "$u" = post ]; then
-            r=$(curl -s -o /dev/null --max-time 30 -d a=1 -d b=2 -w '%{http_code} %{time_total}' "http://$HOST:18080/post.php")
+            r=$(curl -s -o /dev/null --max-time 30 -d a=1 -d b=2 -w '%{http_code} %{time_total}' "http://$HOST:$port/post.php")
         elif [ "$u" = range ]; then
-            r=$(curl -s -o /dev/null --max-time 30 -r 0-65535 -w '%{http_code} %{time_total}' "http://$HOST:18080/big.bin")
+            r=$(curl -s -o /dev/null --max-time 30 -r 0-65535 -w '%{http_code} %{time_total}' "http://$HOST:$port/big.bin")
         else
             r=$(curl -sk --http2 -o /dev/null --max-time 30 -w '%{http_code} %{time_total}' "$u")
         fi
