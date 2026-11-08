@@ -77,7 +77,7 @@ subst() {
     sed -e "s/@PRODUCER@/$KIT_PRODUCER/g" -e "s/@BASE@/$1/g"         -e "s/@PCSIVERSION@/$pcsiversion/g" -e "s/@VERSION@/$UPSTREAM_VERSION/g"         -e "s/@KITVERSION@/$kitversion/g" -e "s/@ARCH@/$2/g"
 }
 lc=$(echo "$KIT_PRODUCT" | tr A-Z a-z)
-for base in I64VMS X86VMS; do
+for base in I64VMS X86VMS AXPVMS; do
     subst $base "" < "$kit/$lc.pcsi\$desc_template" > "$kit/PRODUCT-$base.PCSI\$DESC"
     subst $base "" < "$kit/$lc.pcsi\$text_template" > "$kit/PRODUCT-$base.PCSI\$TEXT"
 done

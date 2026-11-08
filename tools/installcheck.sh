@@ -14,7 +14,7 @@ data=${3:?data directory, e.g. SYS\$SYSDEVICE:[VMSLIGHTTPD_DATA]}
 port=${4:-981}
 cleanup=${5:-}
 read -r _ ARCH HOST _ _ WORKDIR SFTPDIR < <(awk -v n="$node" '$1==n' "$top/tools/nodes.conf")
-base=I64VMS; [ "$ARCH" = X86_64 ] && base=X86VMS
+base=I64VMS; [ "$ARCH" = X86_64 ] && base=X86VMS; [ "${ARCH^^}" = ALPHA ] && base=AXPVMS
 kit=$(ls -t "$top"/out/kits/*-"$base"-LIGHTTPD-*.PCSI | head -1)
 echo "installcheck: $node kit $(basename "$kit"), port $port ${cleanup:+(cleanup)}"
 "$top/tools/vms.sh" "$node" dcl 'if f$search("ic_kit.dir") .eqs. "" then create/directory [.ic_kit]' \
