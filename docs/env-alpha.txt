@@ -1,0 +1,263 @@
+$ Set NoOn
+$ VERIFY = F$VERIFY(F$TRNLNM("SYLOGIN_VERIFY"))
+
+=== system
+version   V8.4-2L2
+arch      Alpha
+hw_name   AlphaServer DS10L
+node      <redacted>
+cpus      1
+memsize   524288 pages of 8192 bytes
+pgflquota 2000000  wsextent 167936
+bytlm     199424  fillm 1000  prclm 10  tqlm 10  biolm 1000  diolm 1000
+maxprocesscnt 830  channelcnt 512
+free blocks 3543824 of 12288000
+
+=== products (web, php, ssl, compilers)
+------------------------------------ ----------- ---------
+PRODUCT                              KIT TYPE    STATE
+------------------------------------ ----------- ---------
+VSI AXPVMS MMS V4.0-5                Full LP     Installed
+VSI AXPVMS SSL V1.4-502A             Full LP     Installed
+VSI AXPVMS SSL1 V1.0-2KA             Full LP     Installed
+VSI AXPVMS SSL111 V1.1-1W            Full LP     Installed
+VSI AXPVMS SSL3 V3.0-22              Full LP     Installed
+VSI AXPVMS SSL31 V3.1-4              Full LP     Installed
+VSI AXPVMS TCPIP V6.0-31             Full LP     Installed
+------------------------------------ ----------- ---------
+7 items found
+
+=== cc/version
+VSI C V7.4-002 on OpenVMS Alpha V8.4-2L2
+
+=== TCP/IP
+
+  VSI TCP/IP Services for OpenVMS Alpha Version V6.0-31
+  on an AlphaServer DS10L running OpenVMS V8.4-2L2
+
+IPv6: 
+ 
+Service             Port  Proto    Process          Address            State
+ 
+ESNMP                705  UDP      ESNMP            0.0.0.0             Disabled
+FTP                   21  TCP      TCPIP$FTP        0.0.0.0             Enabled
+NTP                  123  UDP      TCPIP$NTP        0.0.0.0             Enabled
+SMTP                  25  TCP      TCPIP$SMTP       0.0.0.0             Enabled
+SNMP                 161  UDP      TCPIP$SNMP       0.0.0.0             Enabled
+SSHD22                22  TCP      SSHD22           0.0.0.0             Enabled
+SYSLOG               514  UDP      SYSLOGD          0.0.0.0             Disabled
+TELNET                23  TCP      not defined      0.0.0.0             Enabled
+XDM                  177  UDP      TCPIP$XDM        0.0.0.0             Disabled
+
+=== listeners on 80/443/8080/8443 and our test range 18080-18099, 19000-19031
+tcp        0      0  <alpha-host>.53052       90.210.112.27.443         ESTABLISHED
+
+=== web servers already running
+
+=== PHP kit
+--- where is PHP? (startup procedures, PHP.EXE images on the system disk)
+SYS$COMMON:[SYSMGR]PHP$DEFINE_LOGICALS.COM;1
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.php.bin]PHPDBG.EXE;4
+                     23-MAR-2020 20:21:02.73
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.php.bin]PHPSHR.EXE;3
+                     23-JAN-2022 12:32:30.89
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.php.bin]PHP_CGI.EXE;2
+                     10-FEB-2019 10:10:48.14
+SYS$SYSDEVICE:[SYS0.SYSCOMMON.php.EXTENSIONS]PHP_OPCACHE.EXE;2
+                      5-JAN-2022 12:58:03.43
+SYS$SYSDEVICE:[VMS$COMMON.php.bin]PHPDBG.EXE;4
+                     23-MAR-2020 20:21:02.73
+SYS$SYSDEVICE:[VMS$COMMON.php.bin]PHPSHR.EXE;3
+                     23-JAN-2022 12:32:30.89
+SYS$SYSDEVICE:[VMS$COMMON.php.bin]PHP_CGI.EXE;2
+                     10-FEB-2019 10:10:48.14
+SYS$SYSDEVICE:[VMS$COMMON.php.EXTENSIONS]PHP_OPCACHE.EXE;2
+                      5-JAN-2022 12:58:03.43
+SYS$SYSDEVICE:[wasd_root.axp-bin]PHPWASD.EXE;1
+                     21-MAR-2020 13:23:50.46
+SYS$SYSDEVICE:[wasd_root.php.AXP]PHP.EXE;1
+                     23-MAR-2020 20:20:12.82
+SYS$SYSDEVICE:[wasd_root.php.AXP]PHPDBG.EXE;1
+                     23-MAR-2020 20:21:02.73
+SYS$SYSDEVICE:[wasd_root.php.AXP]PHPSHR.EXE;1
+                     23-JAN-2022 12:38:57.00
+SYS$SYSDEVICE:[wasd_root.php.AXP]PHPWASD.EXE;1
+                     21-MAR-2020 13:23:50.46
+SYS$SYSDEVICE:[wasd_root.php.AXP]PHP_CGI.EXE;1
+                     23-MAR-2020 20:20:04.89
+SYS$SYSDEVICE:[wasd_root.php.AXP]PHP_OPCACHE.EXE;1
+                     23-MAR-2020 20:22:07.90
+SYS$SYSDEVICE:[wasd_root.php_7427.AXP]PHP.EXE;1
+                      5-JAN-2022 13:32:02.31
+SYS$SYSDEVICE:[wasd_root.php_7427.AXP]PHPDBG.EXE;1
+                      5-JAN-2022 13:32:50.47
+SYS$SYSDEVICE:[wasd_root.php_7427.AXP]PHPSHR.EXE;1
+                      5-JAN-2022 13:31:27.56
+SYS$SYSDEVICE:[wasd_root.php_7427.AXP]PHPWASD.EXE;1
+                      5-JAN-2022 13:08:42.90
+SYS$SYSDEVICE:[wasd_root.php_7427.AXP]PHP_CGI.EXE;1
+                      5-JAN-2022 13:31:53.25
+SYS$SYSDEVICE:[wasd_root.php_7427.AXP]PHP_OPCACHE.EXE;1
+                      5-JAN-2022 13:34:00.79
+SYS$SYSDEVICE:[wasd_root.PHP_7427c99.AXP]PHP.EXE;1
+                      5-JAN-2022 12:56:05.37
+SYS$SYSDEVICE:[wasd_root.PHP_7427c99.AXP]PHPDBG.EXE;1
+                      5-JAN-2022 12:56:53.65
+SYS$SYSDEVICE:[wasd_root.PHP_7427c99.AXP]PHPSHR.EXE;1
+                      5-JAN-2022 12:55:31.07
+SYS$SYSDEVICE:[wasd_root.PHP_7427c99.AXP]PHPWASD.EXE;1
+                      5-JAN-2022 13:08:42.90
+SYS$SYSDEVICE:[wasd_root.PHP_7427c99.AXP]PHP_CGI.EXE;1
+                      5-JAN-2022 12:55:56.48
+SYS$SYSDEVICE:[wasd_root.PHP_7427c99.AXP]PHP_OPCACHE.EXE;1
+                      5-JAN-2022 12:58:03.43
+
+(LNM$PROCESS_TABLE)
+
+(LNM$JOB_81F0F440)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+%SHOW-S-NOTRAN, no translation for logical name PHP$*
+
+(LNM$PROCESS_TABLE)
+
+(LNM$JOB_81F0F440)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+%SHOW-S-NOTRAN, no translation for logical name PHP_*
+--- using php$root
+%DIRECT-E-OPENIN, error opening PHP$ROOT:[BIN]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP$ROOT:[000000]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP$ROOT:[EXTENSIONS]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP$ROOT:[LIB...]*.EXE;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP$ROOT:[ETC]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+--- php -v
+%DCL-W-ACTIMAGE, error activating image php$root:[bin]php.exe
+-CLI-E-IMGNAME, image file PHP$ROOT:[BIN]PHP.EXE;
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+--- php -m
+%DCL-W-ACTIMAGE, error activating image php$root:[bin]php.exe
+-CLI-E-IMGNAME, image file PHP$ROOT:[BIN]PHP.EXE;
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+--- php --ini
+%DCL-W-ACTIMAGE, error activating image php$root:[bin]php.exe
+-CLI-E-IMGNAME, image file PHP$ROOT:[BIN]PHP.EXE;
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+--- php -i (selected)
+%SEARCH-I-NOMATCHES, no strings matched
+--- php_cgi (FastCGI server mode is -b)
+%DCL-W-ACTIMAGE, error activating image php$root:[bin]php_cgi.exe
+-CLI-E-IMGNAME, image file PHP$ROOT:[BIN]PHP_CGI.EXE;
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%SEARCH-I-NOMATCHES, no strings matched
+--- php-cgi candidates
+%DIRECT-E-OPENIN, error opening PHP$ROOT:[000000...]*CGI*.EXE;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP$ROOT:[000000...]*FPM*.EXE;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+%DIRECT-E-OPENIN, error opening PHP$ROOT:[CSWS]*.*;* as input
+-RMS-F-DEV, error in device name or inappropriate device type for operation
+
+=== SSL3 kit
+
+(LNM$PROCESS_TABLE)
+
+(LNM$JOB_81F0F440)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+  "SSL3$CERT" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$CERTS" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$COM" = "SSL3$ROOT:[COM]"
+  "SSL3$CONF" = "SSL3$ROOT:[DEMOCA.CONF]"
+  "SSL3$CRL" = "SSL3$ROOT:[DEMOCA.CRL]"
+  "SSL3$EXAMPLES" = "SYS$COMMON:[SYSHLP.EXAMPLES.SSL3]"
+  "SSL3$EXE" = "SSL3$ROOT:[ALPHA_EXE]"
+  "SSL3$INCLUDE" = "SSL3$ROOT:[INCLUDE]"
+  "SSL3$KEY" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$KEYS" = "SSL3$ROOT:[DEMOCA.CERTS]"
+  "SSL3$LIB" = "SSL3$ROOT:[LIB]"
+  "SSL3$MODULES" = "SSL3$ROOT:[MODULES]"
+  "SSL3$PRIVATE" = "SSL3$ROOT:[DEMOCA.PRIVATE]"
+  "SSL3$ROOT" = "SYS$SYSDEVICE:[VMS$COMMON.SSL3.]"
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+SYS$COMMON:[SYSLIB]SSL3$LIBCRYPTO_SHR.EXE;1
+SYS$COMMON:[SYSLIB]SSL3$LIBCRYPTO_SHR32.EXE;1
+SYS$COMMON:[SYSLIB]SSL3$LIBSSL_SHR.EXE;1
+SYS$COMMON:[SYSLIB]SSL3$LIBSSL_SHR32.EXE;1
+OpenSSL 3.0.22 25 Aug 2026 (Library: OpenSSL 3.0.22 25 Aug 2026)
+built on: Wed Aug 26 13:18:10 2026 UTC
+platform: vms-alpha-p64
+options:  bn(64,64)
+compiler: CC/DECC  /DEFINE=(OPENSSL_PIC,OPENSSL_NO_ASM,OPENSSL_BUILDING_OPENSSL,_SOCKADDR_LEN,NDEBUG,OPENSSLDIR="""SSL3$ROOT:[000000]""",ENGINESDIR="""SSL3$ENGINES:""",MODULESDIR="""SSL3$MODULES:"""'extradefines')/INCLUDE=()/DEFINE=(OPENSSL_PIC,OPENSSL_NO_ASM,OPENSSL_BUILDING_OPENSSL,_SOCKADDR_LEN,NDEBUG,OPENSSLDIR="""SSL3$ROOT:[000000]""",ENGINESDIR="""SSL3$ENGINES:""",MODULESDIR="""SSL3$MODULES:"""'extradefines')
+OPENSSLDIR: "SSL3$ROOT:[000000]"
+ENGINESDIR: "SSL3$ENGINES:"
+MODULESDIR: "SSL3$MODULES:"
+Seeding source: os-specific
+CPUINFO: N/A
+SSL3 for OpenVMS V3.0(22) Aug 27 2026 (Library: SSL3 for OpenVMS V3.0(22) Aug 27 2026)
+
+=== zlib / pcre2 install trees in this and the sibling work directories
+%DIRECT-W-NOFILES, no files found
+
+=== MariaDB (our vms-mariadb server)
+%SEARCH-I-NOMATCHES, no strings matched
+
+=== decc$ logicals
+
+(LNM$PROCESS_TABLE)
+
+  "DECC$FD_LOCKING" = "TRUE"
+
+(LNM$JOB_81F0F440)
+
+(LNM$GROUP_000200)
+
+(LNM$SYSTEM_TABLE)
+
+  "DECC$CRTLMAP" = "SYS$SHARE:DECC$SHR_EV56"
+  "DECC$SHR" = "SYS$SHARE:DECC$SHR_EV56"
+
+(LNM$SYSCLUSTER_TABLE)
+
+(DECW$LOGICAL_NAMES)
+
+=== batch queues
+Batch queue SYS$BATCH, available, on <node>::
+
+  Entry  Jobname         Username             Status
+  -----  -------         --------             ------
+    702  vms_recon       IAIN                 Executing
+    698  SSHLOGS         SYSTEM               Holding until 14-NOV-2026 15:45:12.32
+    587  TIDYHOME        IAIN                 Holding until 15-NOV-2026 03:30:00.00
+      3  LOGROTATE       SYSTEM               Holding until  1-DEC-2026 00:05:00.00
+RECON-DONE
+  IAIN         job terminated at 14-NOV-2026 15:34:57.94
+
+  Accounting information:
+  Buffered I/O count:              20572      Peak working set size:      11360
+  Direct I/O count:                 9664      Peak virtual size:         189328
+  Page faults:                      2040      Mounted volumes:                0
+  Charged CPU time:        0 00:00:08.33      Elapsed time:       0 00:00:14.98

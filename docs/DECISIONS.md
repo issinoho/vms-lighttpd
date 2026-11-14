@@ -250,3 +250,33 @@ Alternatives considered:
 - One template with commented lines for each PHP: the site would have to edit it by hand,
   where configure can choose.
 - Asking which PHP: the PHP root already says which kit it is.
+
+## D14. OpenVMS Alpha (AXPVMS)
+
+**Status:** the user's choice (2026-11-14): pcre2, then lighttpd, on the Alpha, so that
+vms-steward can be served there.
+
+- **Node:** AXPBOX, an AlphaServer DS10L under Charon-AXP, OpenVMS V8.4-2L2, VSI C V7.4-002,
+  TCP/IP V6.0-31, SSL3 V3.0-22, MMS V4.0-5 (`docs/env-alpha.txt`). zlib and pcre2 come from
+  the vms-zlib and vms-pcre2 Alpha install trees in the same work directory.
+- **Floating point:** VSI C on Alpha defaults to VAX G_FLOAT, where IA64 and x86-64 are IEEE;
+  `BUILD.COM` compiles with `/FLOAT=IEEE_FLOAT/IEEE_MODE=DENORM_RESULTS` there (the family's
+  rule: a C float passed as IEEE to an RTL routine is otherwise misread; vms-steward's
+  probe_hold waited 0.02 s for 20). Alternatives: leave G_FLOAT (lighttpd hardly uses floats,
+  but the family is consistent and nothing gains from it).
+- **Batch, not interactive:** the Alpha's interactive SSH output is unreliable (commands run,
+  output lost, sessions that never start), so `build.sh`, `kit.sh`, `recon.sh` and `probe.sh`
+  use `vms.sh batch` when the node's architecture is ALPHA; `vms.sh` is vms-pcre2's (it retries
+  a command that never started). The other nodes are unchanged.
+- **Probes:** `probe.sh` sends only the probes that run by themselves (r_files, r_net,
+  r_net2, r_proc, r_spawn, s_*), and empties the remote probe directory first:
+  `vms_probe.com` compiles and runs every R_*.C it finds there, and a stale `r_blast.c` (a
+  server waiting for a client) hung two runs for over half an hour each.
+- **What the probes found** (`docs/probes-alpha.txt`, against IA64): spawning works and
+  costs 31-51 ms (IA64 9); r_files ran to its end (on IA64 it ACCVIOed in fopen); TLS
+  through SSL3 3.0.22 works; concurrent connections stop at the batch job's BYTLM; a 1 GB
+  malloc fails (page file quota); binding `[::]` gives EINVAL, so test configurations bind
+  0.0.0.0.
+- **Result:** `build.sh alpha`: 70 compiles, no warnings, `LIGHTTPD.EXE` and
+  `LIGHTTPD_SIGNAL.EXE`; the Phase 2 test server on 18080/18443: `test_http.sh alpha`
+  24 passed, 0 failed. PHP was not tested (none for Alpha in this family).

@@ -4,9 +4,10 @@
 set -euo pipefail
 top=$(cd "$(dirname "$0")/.." && pwd)
 node=${1:?usage: recon.sh <node>}
-read -r _ _ HOST _ _ _ _ < <(awk -v n="$node" '$1==n' "$top/tools/nodes.conf")
+read -r _ ARCH HOST _ _ _ _ < <(awk -v n="$node" '$1==n' "$top/tools/nodes.conf")
+mode=run; [ "$ARCH" = ALPHA ] && mode=batch   # interactive ssh output is unreliable on the Alpha
 out=$top/docs/env-$node.txt
-VMS_TIMEOUT=900 "$top/tools/vms.sh" "$node" run "$top/tools/vms_recon.com" |
+VMS_TIMEOUT=900 "$top/tools/vms.sh" "$node" $mode "$top/tools/vms_recon.com" |
     sed -e "s/$HOST/<$node-host>/g" > "$out"
 grep -q RECON-DONE "$out" || { echo "recon: incomplete output in $out" >&2; exit 1; }
 echo "recon: $out"

@@ -53,7 +53,11 @@ $! _POSIX_EXIT: exit() codes are POSIX ones.  _SOCKADDR_LEN: 4.4BSD
 $! sockaddr layout, as SSL3 is built (and needed for sockaddr_in6).
 $! Include directories in UNIX form, so that "ls-hpack/lshpack.h" and
 $! "../compat/sys/queue.h" resolve against them (as in vms-curl).
-$ cflags = "/NAMES=(AS_IS,SHORTENED)/FLOAT=IEEE/NOLIST/DEBUG=TRACEBACK" + -
+$! Alpha's C defaults to VAX G_FLOAT: IEEE_FLOAT there, with denormals as results
+$! as the sibling ports build (a float handed to a system service goes wrong otherwise).
+$ fltq = "/FLOAT=IEEE"
+$ if arch .eqs. "ALPHA" then fltq = "/FLOAT=IEEE_FLOAT/IEEE_MODE=DENORM_RESULTS"
+$ cflags = "/NAMES=(AS_IS,SHORTENED)" + fltq + "/NOLIST/DEBUG=TRACEBACK" + -
     "/DEFINE=(HAVE_CONFIG_H,LIGHTTPD_STATIC,_LARGEFILE,_USE_STD_STAT,_POSIX_EXIT,_SOCKADDR_LEN)" + -
     "/INCLUDE_DIRECTORY=(""./src"",""./src/ls-hpack"",""./vmsport"",ZLIB$ROOT:[INCLUDE],PCRE2$ROOT:[INCLUDE])"
 $!

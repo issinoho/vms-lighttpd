@@ -37,17 +37,25 @@ while read -r f; do
     printf '#include "probe_hdrs.h"\nint main(void) { void *p = (void *) &%s; return p == 0; }\n' "$f" > "$gen/g_$f.c"
 done < <(lists functions.list)
 
-cp "$top"/probes/*.c "$top/tools/vms_probe.com" "$gen/"
+# The automatic runtime set. The other r_*.c files (r_blast, r_nodelay, r_pollout:
+# servers that wait for a client; r_bindpriv: binds a given, possibly privileged
+# port; r_fileread: needs a file; r_tmpfile) are run by hand with arguments, and
+# in the batch run on the Alpha r_blast waited for a client until it was stopped.
+cp "$top"/probes/r_files.c "$top"/probes/r_net.c "$top"/probes/r_net2.c "$top"/probes/r_proc.c \
+   "$top"/probes/r_spawn.c "$top"/probes/s_*.c "$top/tools/vms_probe.com" "$gen/"
 nfiles=$(ls "$gen" | wc -l)
 echo "probe: uploading $nfiles files to $node"
 "$top/tools/vms.sh" "$node" dcl 'if f$search("lighttpd_probe.dir") .eqs. "" then create/directory [.lighttpd_probe]' >/dev/null
+# the runtime loop takes every R_*.C in the directory: clear out earlier uploads first
+"$top/tools/vms.sh" "$node" dcl 'if f$search("[.lighttpd_probe]*.*;*") .nes. "" then delete/nolog [.lighttpd_probe]*.*;*' >/dev/null
 ( cd "$gen" && "$top/tools/vms.sh" "$node" put * -- lighttpd_probe )
 
-read -r _ _ HOST _ _ WORKDIR _ < <(awk -v n="$node" '$1==n' "$top/tools/nodes.conf")
+read -r _ ARCH HOST _ _ WORKDIR _ < <(awk -v n="$node" '$1==n' "$top/tools/nodes.conf")
+mode=run; [ "$ARCH" = ALPHA ] && mode=batch   # interactive ssh output is unreliable on the Alpha
 job=$top/cache/probe-$node.com
 printf '$ set noon\n$ @%s.LIGHTTPD_PROBE]VMS_PROBE.COM %s\n' "${WORKDIR%]}" "$sets" > "$job"
 out=$top/docs/probes-$node$([ "$sets" = HFGRS ] || echo "-$sets").txt
-VMS_TIMEOUT=${VMS_TIMEOUT:-5400} "$top/tools/vms.sh" "$node" run "$job" |
+VMS_TIMEOUT=${VMS_TIMEOUT:-5400} "$top/tools/vms.sh" "$node" $mode "$job" |
     sed -e "s/$HOST/<$node-host>/g" > "$out"
 grep -q PROBE-DONE "$out" || { echo "probe: incomplete output in $out" >&2; exit 1; }
 echo "probe: $out"
