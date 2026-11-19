@@ -20,6 +20,7 @@ Installed files (VMSLIGHTTPD$ROOT, defined by VMSLIGHTTPD$STARTUP)
   [COM]VMSLIGHTTPD$CONTROL.COM     START, STOP, RESTART, STATUS, ROTATE
   [COM]VMSLIGHTTPD$BOOT.COM        batch job (as the account) that starts it
   [COM]VMSLIGHTTPD$SERVER.COM      the server process
+  [COM]VMSLIGHTTPD$ROTATE.COM      daily log rotation (batch job)
   [COM]PHP_POOL.COM          the PHP FastCGI pool
   [CONF]                     templates: LIGHTTPD.CONF, MIME.CONF, PHPBB.CONF,
                              PHP-VMSPHP.INI (PHP for OpenVMS 8.5),
@@ -49,7 +50,10 @@ processes with the account's quotas.  STOP sends the server SIGTERM (it
 finishes requests in progress) and uses STOP/ID only after 30 seconds, then
 stops the pool.  ROTATE makes new versions of error.log and access.log, sends
 SIGHUP so that lighttpd reopens them, and purges to 7 versions
-(vmslighttpd_keep_logs).  STATUS shows the processes and the end of
+(vmslighttpd_keep_logs).  START also queues VMSLIGHTTPD$ROTATE, a batch job
+run as the account that does ROTATE every day at vmslighttpd_rotate_time
+(default 00:05; set it to "" for none) on vmslighttpd_batch_queue (default
+SYS$BATCH), logging to LOGS:ROTATE.LOG.  STATUS shows the processes and the end of
 error.log, and when the server is not running the end of SERVER.LOG
 (configuration errors that stop it starting are only there).
 

@@ -302,3 +302,29 @@ vms-steward can be served there.
   throttles it). Making the priority a parameter: not needed yet. Throttling the scraper
   itself belongs in front of the server (a challenge proxy) and in phpBB (guest search off,
   search flood interval), which are site settings, not the port's.
+
+## D16. Daily log rotation as a self-resubmitting batch job
+
+**Status:** approved by the user (2026-11-19). On the x86 node `access.log` had not been
+rotated since 2026-10-08 and had grown to 203,765 blocks (~100 MB).
+
+- **`VMSLIGHTTPD$ROTATE.COM`** (new, in the kit): the batch job queues its own next run,
+  then runs `VMSLIGHTTPD$CONTROL ROTATE`. It requeues *before* rotating, so a failed
+  rotation does not end the schedule; with the server down, ROTATE only says so. Before
+  submitting it looks at the caller's own jobs in every queue (generic ones included) and
+  submits nothing if another `VMSLIGHTTPD_ROTATE` is queued, so repeated STARTs never stack
+  jobs. Log: `LOGS:ROTATE.LOG`, purged to `vmslighttpd_keep_logs`.
+- **Who queues it:** `VMSLIGHTTPD$BOOT` (`ROTATE SCHEDULE`), after starting the server. BOOT
+  already runs as the service account, so START needed no change and the job runs as that
+  account with no privilege: it owns the logs and the LOGS directory, `VMSLIGHTTPD$CONFIG.COM`
+  is world-readable, and the server it sends SIGHUP to has its UIC. Run by another user,
+  SCHEDULE submits `/USER=<account>` (CMKRNL).
+- **Settings** (written by CONFIGURE; defaults apply when an older CONFIG.COM lacks them):
+  `vmslighttpd_rotate_time` (`00:05`; `""` turns it off) and `vmslighttpd_batch_queue`
+  (`SYS$BATCH`). Daily, with the existing `vmslighttpd_keep_logs` (7), keeps a week; daily
+  files stay small enough to SEARCH (in the scraper incident 10 minutes made 1,479 blocks).
+- **STOP leaves the job queued:** it is harmless while the server is down, and the next
+  START finds it rather than adding another.
+- **Alternatives:** a SYSTEM-owned job (needs privileges the account does not); rotating
+  inside lighttpd (it has no rotation; upstream relies on logrotate and SIGHUP, which is what
+  ROTATE does); rotating by size (needs a polling job); weekly (files 7x larger).

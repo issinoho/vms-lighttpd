@@ -1,6 +1,7 @@
 $! VMSLIGHTTPD$BOOT.COM - batch job, run as the service account by
 $! VMSLIGHTTPD$CONTROL START (SUBMIT/USER=<account>): starts the PHP pool and
-$! the server as detached processes, then exits.
+$! the server as detached processes, queues the daily log rotation
+$! (VMSLIGHTTPD$ROTATE), then exits.
 $!
 $! RUN/DETACHED/AUTHORIZE LOGINOUT from a job of the account gives the server
 $! the account's own identity, UAF quotas and privileges (TMPMBX,NETMBX);
@@ -22,4 +23,5 @@ $ run/detached/authorize sys$system:loginout.exe -
       /output='logs'SERVER.LOG /error='logs'SERVER.LOG -
       /process_name=VMSLIGHTTPD
 $ say "VMSLIGHTTPD$BOOT: server process ", $status
+$ @VMSLIGHTTPD$ROOT:[COM]VMSLIGHTTPD$ROTATE SCHEDULE
 $ exit 1
