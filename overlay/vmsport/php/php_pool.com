@@ -20,6 +20,9 @@ $!   <php-root>:[BIN]PHP_CGI.EXE -c <pool-dir>PHP.INI -b 127.0.0.1:<port>
 $! ([CSWS]PHP-CGI.EXE for VSI's PHP 8.0 kit)
 $! in a DCL loop that starts PHP again if it exits.  PHP_FCGI_CHILDREN is 0,
 $! so PHP never forks.  lighttpd's fastcgi.server lists the same host:port pairs.
+$! The processes run at base priority 2, below interactive and network
+$! servers (4), so that a flood of PHP requests cannot take the CPUs from
+$! SSHD, lighttpd or the database (docs/DECISIONS.md D15).
 $! STOP writes [.LOGS]POOL.STOP so the loops end, then stops the processes.
 $!
 $ set noon
@@ -106,7 +109,7 @@ $ write w "$ goto loop"
 $ close w
 $ run/detached sys$system:loginout.exe /input='com' -
       /output='logs''name'.LOG /error='logs''name'.LOG -
-      /process_name='name' -
+      /process_name='name' /priority=2 -
       /buffer_limit=200000 /file_limit=200 /io_buffered=200 /io_direct=200 -
       /queue_limit=64 /enqueue_limit=4000 /ast_limit=300 /subprocess_limit=4 -
       /page_file=2000000 /working_set=8192 /maximum_working_set=32768 /extent=131072

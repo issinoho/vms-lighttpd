@@ -280,3 +280,25 @@ vms-steward can be served there.
 - **Result:** `build.sh alpha`: 70 compiles, no warnings, `LIGHTTPD.EXE` and
   `LIGHTTPD_SIGNAL.EXE`; the Phase 2 test server on 18080/18443: `test_http.sh alpha`
   24 passed, 0 failed. PHP was not tested (none for Alpha in this family).
+
+## D15. The PHP pool runs at base priority 2
+
+**Status:** approved by the user (2026-11-19), after an incident on the x86 node.
+
+- **Incident:** a distributed scraper (about 350 phpBB requests in 8 minutes, nearly every
+  one from a different IP, rotating browser user agents, a forged Referer, mostly
+  `viewforum.php` and `search.php`) kept the four `LTPHP_190xx` processes busy. They used
+  ~1,120 CPU-seconds in 623 s on the node's 2 CPUs (~3 CPU-s a page), evenly split, and
+  ran at base priority 4, like SSHD and interactive users: ssh logins timed out in the
+  banner exchange and lighttpd logged "connection limit reached" every 1-2 s. The pool was
+  stopped by hand.
+- **Change:** `PHP_POOL.COM` creates each `LTPHP_<port>` with `RUN/DETACHED/PRIORITY=2`.
+  Lowering a base priority needs no privilege (raising needs ALTPRI). PHP still gets every
+  idle cycle; it loses only to processes that want the CPU, so the node and the server's
+  static files stay responsive and PHP pages slow down under a flood instead.
+- **Alternatives:** fewer PHP processes (caps throughput when the node is otherwise idle,
+  and four processes at priority 4 still starve at 2); per-IP rate limiting in lighttpd
+  (useless against hundreds of addresses); CPU limits (`/CPU_LIMIT` ends the process, not
+  throttles it). Making the priority a parameter: not needed yet. Throttling the scraper
+  itself belongs in front of the server (a challenge proxy) and in phpBB (guest search off,
+  search flood interval), which are site settings, not the port's.
