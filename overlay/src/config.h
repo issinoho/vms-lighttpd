@@ -74,7 +74,6 @@
 #define HAVE_SIGNAL 1
 #define HAVE_SRANDOM 1
 #define HAVE_STRERROR_R 1
-#define HAVE_WRITEV 1
 
 /* Deliberately undefined:
  *   HAVE_FORK, HAVE_POSIX_SPAWN    no fork/posix_spawn in the CRTL (vfork+exec only)
@@ -89,6 +88,12 @@
  *                                  mod_authn_file is not built
  *   HAVE_STRUCT_TM_GMTOFF          not verified
  *   HAVE_WEAK_SYMBOLS              not with VSI C
+ *   HAVE_WRITEV                    writev() is in the CRTL, but on a non-blocking
+ *                                  socket it never writes partially and about a
+ *                                  third of its failures return -1 without setting
+ *                                  errno (probes/r_wrinprog.c, DECISIONS D17):
+ *                                  lighttpd then drops the connection.  Without it
+ *                                  network_write.c uses write() per chunk.
  */
 
 #endif

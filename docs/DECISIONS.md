@@ -328,3 +328,29 @@ rotated since 2026-10-08 and had grown to 203,765 blocks (~100 MB).
 - **Alternatives:** a SYSTEM-owned job (needs privileges the account does not); rotating
   inside lighttpd (it has no rotation; upstream relies on logrotate and SIGHUP, which is what
   ROTATE does); rotating by size (needs a polling job); weekly (files 7x larger).
+
+## D17. No writev() on VMS: lighttpd writes each chunk with write()
+
+**Status:** approved by the user (2026-11-20), for vms5.
+
+- **Symptom:** under load the x86 server logged `(network_write.c.119) write() N: operation in
+  progress` (32 by 10:00 on 2026-11-20, rising and falling with the scraper of D15) and dropped
+  each such connection: `network_write_error()` retries only EAGAIN/EWOULDBLOCK/EINTR.
+- **Cause** (`probes/r_wrinprog.c`, x86, VSI C V7.7-003, OpenVMS E9.2-4): the CRTL's
+  `writev()` on a non-blocking TCP socket is all-or-nothing (it never writes partially; one
+  larger than the 64 KB send buffer never succeeds), and about a third of its failures
+  return -1 without setting errno (496 of 1,500 calls; the other 997 set EWOULDBLOCK).
+  errno then still holds EINPROGRESS: a non-blocking `connect()` returns it every time on
+  VMS, and lighttpd makes one to the PHP pool for each request. `write()` is correct on
+  loopback and over the LAN: partial writes, then EWOULDBLOCK; EPIPE after a reset or close;
+  ENOTCONN while a connect is pending; errno always set.
+- **Change:** `HAVE_WRITEV` is no longer defined in `overlay/src/config.h`. Only
+  `network_write.c` uses it; without it `NETWORK_WRITE_USE_WRITEV` is off and memory chunks go
+  out one `write()` each (`network_write_mem_chunk`). Temporary files use `pwritev()`, which
+  was never enabled (`HAVE_PWRITEV`). No upstream file changes.
+- **Cost:** a response made of several memory chunks (headers + body pieces) takes one system
+  call per chunk instead of one in all; lighttpd's write loop already handles that.
+- **Alternatives:** a patch in `network_writev_mem_chunks()` that clears errno before
+  `writev()` and treats -1 with errno 0 as EAGAIN (keeps a call that cannot write partially,
+  so a writev larger than the send buffer would wait for POLLOUT for ever); a wrapper that
+  emulates writev() with write() (more code for what lighttpd already does without it).
