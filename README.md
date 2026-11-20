@@ -11,8 +11,11 @@ alternative to VSI's Apache; [phpBB](https://www.phpbb.com/) 3.3 runs on it with
 [PHP 8.5 for OpenVMS](https://github.com/issinoho/vms-php) (or VSI's PHP 8.1) and
 [vms-mariadb](https://github.com/issinoho/vms-mariadb).
 
-**Status:** lighttpd **1.4.85**, kit **LIGHTTPD V1.4-85E3** for x86-64 and IA64, and
-**V1.4-85E4** for Alpha (vms4: the same lighttpd, built and tested there; docs/DECISIONS.md D14).
+**Status:** lighttpd **1.4.85**, kit **LIGHTTPD V1.4-85E5** for x86-64 and Alpha, and
+**V1.4-85E3** for IA64 (vms5 was not built there: the node was unavailable). vms5: the PHP pool
+runs below interactive priority (docs/DECISIONS.md D15), the logs are rotated daily by a batch
+job (D16), and responses are written with `write()`, as the CRTL's `writev()` dropped
+connections under load (D17).
 Static files, HTTPS (TLS 1.3, and 1.2 when enabled), HTTP/2, PHP over FastCGI, phpBB, and a
 service that runs under its own account and drops its privileges after binding: all tested on
 both architectures (see `docs/PHASE0.md` ... `docs/PHASE5.md`).
@@ -43,7 +46,8 @@ account, data and settings. The kit's `[VMSLIGHTTPD.DOC]README.VMS` has the deta
   `/PRIVILEGED=OPER`; once its listeners are bound it disables every privilege but
   `TMPMBX,NETMBX`, checks that, and stops if anything else is left.
 - **Stop and log rotation** use C RTL signals (`LIGHTTPD_SIGNAL.EXE`): SIGTERM for a graceful
-  stop, SIGHUP after `ROTATE` has made new log file versions.
+  stop, SIGHUP after `ROTATE` has made new log file versions. `START` queues
+  `VMSLIGHTTPD$ROTATE`, which rotates every day at `vmslighttpd_rotate_time` (default 00:05).
 - **Configuration paths are UNIX form**, and includes must be absolute.
 - **Content should be Stream_LF.** Other record formats (variable, fixed, VFC) are sent by their
   converted bytes up to 32 MB, with a warning to `CONVERT` them.
@@ -51,7 +55,8 @@ account, data and settings. The kit's `[VMSLIGHTTPD.DOC]README.VMS` has the deta
   procedure sets.
 - **Behind a reverse proxy** that ends TLS, set `extforward.forwarder` to the proxy's address
   (commented in the template): PHP then sees the client's address and `HTTPS=on`.
-- **PHP** runs as `PHP_POOL.COM`'s detached `LTPHP_<port>` processes (`PHP_CGI.EXE -b`);
+- **PHP** runs as `PHP_POOL.COM`'s detached `LTPHP_<port>` processes (`PHP_CGI.EXE -b`) at
+  base priority 2, so a flood of PHP requests cannot take the CPUs from interactive users;
   lighttpd does not start processes itself (no mod_cgi or FastCGI `bin-path` on VMS).
 
 ## How this repository works
