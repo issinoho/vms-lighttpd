@@ -343,7 +343,8 @@ rotated since 2026-10-08 and had grown to 203,765 blocks (~100 MB).
   errno then still holds EINPROGRESS: a non-blocking `connect()` returns it every time on
   VMS, and lighttpd makes one to the PHP pool for each request. `write()` is correct on
   loopback and over the LAN: partial writes, then EWOULDBLOCK; EPIPE after a reset or close;
-  ENOTCONN while a connect is pending; errno always set.
+  ENOTCONN while a connect is pending; errno always set. The Alpha (VSI C V7.4-002, OpenVMS
+  V8.4-2L2) behaves the same: no partial writev(), 499 of 1,500 calls -1 without errno.
 - **Change:** `HAVE_WRITEV` is no longer defined in `overlay/src/config.h`. Only
   `network_write.c` uses it; without it `NETWORK_WRITE_USE_WRITEV` is off and memory chunks go
   out one `write()` each (`network_write_mem_chunk`). Temporary files use `pwritev()`, which
