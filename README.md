@@ -11,8 +11,9 @@ alternative to VSI's Apache; [phpBB](https://www.phpbb.com/) 3.3 runs on it with
 [PHP 8.5 for OpenVMS](https://github.com/issinoho/vms-php) (or VSI's PHP 8.1) and
 [vms-mariadb](https://github.com/issinoho/vms-mariadb).
 
-**Status:** lighttpd **1.4.85**, kit **LIGHTTPD V1.4-85E5** for x86-64 and Alpha, and
-**V1.4-85E3** for IA64 (vms5 was not built there: the node was unavailable). vms5: the PHP pool
+**Status:** lighttpd **1.4.85**, kit **LIGHTTPD V1.4-85E6** for x86-64 and Alpha, and
+**V1.4-85E3** for IA64 (vms5 and vms6 were not built there: the node was unavailable). vms6
+rebuilds vms5 with zlib 1.4, which fixes several memory-safety bugs. vms5: the PHP pool
 runs below interactive priority (docs/DECISIONS.md D15), the logs are rotated daily by a batch
 job (D16), and responses are written with `write()`, as the CRTL's `writev()` dropped
 connections under load (D17).
