@@ -58,7 +58,7 @@ tools/vms.sh <node> dcl '<cmd>' ...  # run DCL; also run/batch/put/get
   #1-2). Upstream files that define them are patched (0002).
 - **BUILD.COM does not track headers or qualifiers**: `tools/build.sh <node> CLEAN` after
   changing either.
-- The dependency trees (`ZLIB-1_3_2`, `PCRE2-10_49`) are built by the sibling repos into this
+- The dependency trees (`ZLIB_TREE`, `PCRE2_TREE` in `upstream.conf`) are built by the sibling repos into this
   work directory; their `tools/nodes.conf` is a copy of ours.
 - Background jobs in WSL die with the `wsl.exe` that started them: start long builds with
   `setsid nohup ... &` and wait on the PID, keeping logs under `out/`, not `/tmp`.
